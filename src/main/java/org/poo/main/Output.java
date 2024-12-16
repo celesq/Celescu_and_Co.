@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -111,6 +112,20 @@ public class Output {
             } else if (commandInput[i].getCommand().equals("setAlias")) {
                 setAlias(commandInput[i].getCommand(), commandInput[i].getEmail(), commandInput[i].getAlias(),
                         commandInput[i].getAccount());
+            } else if (commandInput[i].getCommand().equals("splitPayment")) {
+                splitPayment(commandInput[i].getCommand(), commandInput[i].getAccounts(), commandInput[i].getCurrency(),
+                        commandInput[i].getTimestamp(), commandInput[i].getAmount());
+            } else if (commandInput[i].getCommand().equals("changeInterestRate")) {
+                changeInterestRate(commandInput[i].getAccount(), commandInput[i].getInterestRate(),
+                        commandInput[i].getTimestamp());
+            } else if (commandInput[i].getCommand().equals("addInterest")) {
+                addInterest(commandInput[i].getCommand(), commandInput[i].getAccount(), commandInput[i].getTimestamp());
+            } else if (commandInput[i].getCommand().equals("report")) {
+                report(commandInput[i].getCommand(), commandInput[i].getStartTimestamp(),
+                        commandInput[i].getEndTimestamp(), commandInput[i].getAccount(), commandInput[i].getTimestamp());
+            } else if (commandInput[i].getCommand().equals("spendingsReport")) {
+                spendingsReport(commandInput[i].getStartTimestamp(), commandInput[i].getEndTimestamp(),
+                        commandInput[i].getAccount(), commandInput[i].getTimestamp());
             }
         }
     }
@@ -158,7 +173,7 @@ public class Output {
                 if (accountType.equals("savings")) {
                     account = new SavingsAccount(Iban, 0, currency, accountType, interestRate);
                 } else {
-                    account = new Account(Iban, 0, currency, accountType);
+                    account = new ClassicAccount(Iban, 0, currency, accountType);
                 }
                 Transactions transaction = new Transactions.
                         TransactionsBuilder(timestamp, "New account created").build();
@@ -197,6 +212,46 @@ public class Output {
         }
         objectNode.put("timestamp", timestamp);
         output.add(objectNode);
+    }
+
+    public void changeInterestRate(String Iban, double interestRate, int timestamp) {
+        for (User user : users) {
+            for (Account account : user.getAccounts()) {
+                if (account.getIban().equals(Iban)) {
+                    boolean ok = account.changeInterestRate(interestRate);
+                    if (!ok) {
+                        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+                        objectNode.put("command", "changeInterestRate");
+                        ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
+                        objectNode1.put("description", "This is not a savings account");
+                        objectNode1.put("timestamp", timestamp);
+                        objectNode.put("output", objectNode1);
+                        objectNode.put("timestamp", timestamp);
+                        output.add(objectNode);
+                    }
+                }
+            }
+        }
+    }
+
+    public void addInterest(String command, String Iban, int timestamp) {
+        for (User user : users) {
+            for (Account account : user.getAccounts()) {
+                if (account.getIban().equals(Iban)) {
+                    boolean ok = account.addInterest();
+                    if (!ok) {
+                        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+                        objectNode.put("command", "addInterest");
+                        ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
+                        objectNode1.put("description", "This is not a savings account");
+                        objectNode1.put("timestamp", timestamp);
+                        objectNode.put("output", objectNode1);
+                        objectNode.put("timestamp", timestamp);
+                        output.add(objectNode);
+                    }
+                }
+            }
+        }
     }
 
     public void createCard(String command, String Iban, String email, int timestamp) {
@@ -409,7 +464,7 @@ public class Output {
         output.add(objectNode);
     }
 
-    public void putTransactionInObject(ObjectNode objectNode, Transactions transactions) {
+    public static void putTransactionInObject(ObjectNode objectNode, Transactions transactions) {
         objectNode.put("timestamp", transactions.getTimestamp());
         objectNode.put("description", transactions.getDescription());
         if (transactions.getCard() != null) {
@@ -427,11 +482,24 @@ public class Output {
         if (transactions.getReceiverIban() != null) {
             objectNode.put("receiverIBAN", transactions.getReceiverIban());
         }
+        if (transactions.getCurrency() != null) {
+            objectNode.put("currency", transactions.getCurrency());
+        }
         if (transactions.getAmount() != null) {
             objectNode.put("amount", transactions.getAmount());
         }
         if (transactions.getAmount_online() != 0) {
             objectNode.put("amount", transactions.getAmount_online());
+        }
+        if (transactions.getInvolvedAccounts() != null) {
+            ArrayNode arrayNode2 = new ObjectMapper().createArrayNode();
+            for (String accounts : transactions.getInvolvedAccounts()) {
+                arrayNode2.add(accounts);
+            }
+            objectNode.put("involvedAccounts", arrayNode2);
+        }
+        if (transactions.getError() != null) {
+            objectNode.put("error", transactions.getError());
         }
         if (transactions.getTransferType() != null) {
             objectNode.put("transferType", transactions.getTransferType());
@@ -447,5 +515,97 @@ public class Output {
                 user.getAliases().putIfAbsent(alias, Iban);
             }
         }
+    }
+
+    public void splitPayment(String command, List<String> accountsInput, String currency, int timestamp, double amount) {
+        List<Account> accountsForSplit = new ArrayList<>();
+        for (String accountInput : accountsInput) {
+            for (User user : users) {
+                for (Account account : user.getAccounts()) {
+                    if (account.getIban().equals(accountInput)) {
+                        accountsForSplit.add(account);
+                    }
+                }
+            }
+        }
+        Account accountWhichCouldNotPay = null;
+        for (Account account : accountsForSplit) {
+            if (!account.checkEnoughForSplit(currency, amount, accountsForSplit.size(), exchangeRates)) {
+                accountWhichCouldNotPay = account;
+            }
+        }
+        if (accountWhichCouldNotPay != null) {
+            errorSplittingPayment(accountsForSplit, accountWhichCouldNotPay, amount, currency, accountsForSplit.size(), timestamp,
+                    accountsInput);
+            return;
+        }
+        for (Account account : accountsForSplit) {
+            account.splitPayment(currency, amount, accountsInput.size(), exchangeRates, timestamp, accountsInput);
+        }
+    }
+
+    public void errorSplittingPayment(List<Account> accountsForSplit, Account accountWhichCouldNotPay, double amount,
+                                     String currency, int people, int timestamp, List <String> accountsInput) {
+        for (Account account : accountsForSplit) {
+            Transactions newTransaction;
+            if (amount % 1 == 0) {
+                newTransaction = new Transactions.TransactionsBuilder(timestamp, "Split payment of "
+                        + amount + "0 " + currency).setAmount_online(amount / people).setCurrency(currency).
+                        setInvolvedAccounts(accountsInput).setError("Account " + accountWhichCouldNotPay.getIban() +
+                                " has insufficient funds for a split payment.").build();
+            } else {
+                newTransaction = new Transactions.TransactionsBuilder(timestamp, "Split payment of "
+                        + amount + " " + currency).setAmount_online(amount / people).setCurrency(currency).
+                        setInvolvedAccounts(accountsInput).setError("Account " + accountWhichCouldNotPay.getIban() +
+                                " has insufficient funds for a split payment.").build();
+            }
+            account.getTransactions().add(newTransaction);
+        }
+    }
+
+    public void report(String command, int startTimeStamp, int endTimeStamp, String Iban, int timestamp) {
+        int found = 0;
+        ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
+        objectNode1.put("command", "report");
+        for (User user : users) {
+            for (Account account : user.getAccounts()) {
+                if (account.getIban().equals(Iban)) {
+                    found = 1;
+                    ObjectNode objectNode = account.makeReport(startTimeStamp, endTimeStamp, timestamp);
+                    objectNode1.put("output", objectNode);
+                }
+            }
+        }
+        if (found == 0) {
+            ObjectNode objectNode = new ObjectMapper().createObjectNode();
+            objectNode.put("description", "Account not found");
+            objectNode.put("timestamp", timestamp);
+            objectNode1.put("output", objectNode);
+        }
+        objectNode1.put("timestamp", timestamp);
+        output.add(objectNode1);
+    }
+
+    public void spendingsReport(int startTimeStamp, int endTimeStamp, String Iban, int timestamp) {
+        int found = 0;
+        ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
+        objectNode1.put("command", "spendingsReport");
+        for (User user : users) {
+            for (Account account : user.getAccounts()) {
+                if (account.getIban().equals(Iban)) {
+                    found = 1;
+                    ObjectNode objectNode = account.makeSpendingsReport(startTimeStamp, endTimeStamp, timestamp);
+                    objectNode1.put("output", objectNode);
+                }
+            }
+        }
+        if (found == 0) {
+            ObjectNode objectNode = new ObjectMapper().createObjectNode();
+            objectNode.put("description", "Account not found");
+            objectNode.put("timestamp", timestamp);
+            objectNode1.put("output", objectNode);
+        }
+        objectNode1.put("timestamp", timestamp);
+        output.add(objectNode1);
     }
 }

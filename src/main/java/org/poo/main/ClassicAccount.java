@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import static org.poo.main.Utils.calculateExchangeRate;
 import static org.poo.main.Utils.roundToTwoDecimalPlates;
 
-public class SavingsAccount implements Account {
 
+public class ClassicAccount implements Account {
     private String Iban;
     private double balance;
     private String currency;
@@ -18,14 +18,12 @@ public class SavingsAccount implements Account {
     private double minBalance;
     private ArrayList<Card> cards = new ArrayList<>();
     private ArrayList<Transactions> transactions = new ArrayList<>();
-    private double interestRate;
 
-    public SavingsAccount(String Iban, double balance, String currency, String accountType, double interestRate) {
+    public ClassicAccount(String Iban, double balance, String currency, String accountType) {
         this.Iban = Iban;
         this.balance = balance;
         this.currency = currency;
         this.accountType = accountType;
-        this.interestRate = interestRate;
     }
 
     public String getAccountType() {
@@ -84,14 +82,6 @@ public class SavingsAccount implements Account {
         this.minBalance = minBalance;
     }
 
-    public double getInterestRate() {
-        return interestRate;
-    }
-
-    public void setInterestRate(double interestRate) {
-        this.interestRate = interestRate;
-    }
-
     public void sendMoney(String command, double amount, Account recieverAccount, int timestamp, String description,
                           ArrayList<ExchangeRate> exchangeRates) {
         Transactions newTransaction, recieverTransaction;
@@ -114,6 +104,7 @@ public class SavingsAccount implements Account {
                 setTransferType("received").build();
         recieverAccount.getTransactions().add(recieverTransaction);
     }
+
 
     public boolean checkEnoughForSplit(String currency, double amount, int people,
                                        ArrayList<ExchangeRate> exchangeRates) {
@@ -145,15 +136,12 @@ public class SavingsAccount implements Account {
         transactions.add(newTransaction);
     }
 
-
     public boolean changeInterestRate(double interestRate) {
-        this.interestRate = interestRate;
-        return true;
+        return false;
     }
 
     public boolean addInterest() {
-        balance = balance + balance * interestRate;
-        return true;
+        return false;
     }
 
     public ObjectNode makeReport(int startTimeStamp, int endTimeStamp, int timestamp) {

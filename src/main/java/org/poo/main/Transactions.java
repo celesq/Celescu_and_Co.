@@ -1,5 +1,8 @@
 package org.poo.main;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Transactions {
     private int timestamp;
     private String description;
@@ -12,6 +15,9 @@ public class Transactions {
     private String card;
     private String cardHolder;
     private double amount_online;
+    private String currency;
+    private List<String> involvedAccounts = new ArrayList<>();
+    private String error;
 
     public Transactions(TransactionsBuilder builder) {
         this.timestamp = builder.timestamp;
@@ -25,6 +31,9 @@ public class Transactions {
         this.card = builder.card;
         this.cardHolder = builder.cardHolder;
         this.amount_online = builder.amount_online;
+        this.currency = builder.currency;
+        this.involvedAccounts = builder.involvedAccounts;
+        this.error = builder.error;
     }
 
     static class TransactionsBuilder {
@@ -39,6 +48,9 @@ public class Transactions {
         private String card = null;
         private String cardHolder = null;
         private double amount_online = 0;
+        private String currency = null;
+        private List<String> involvedAccounts = null;
+        private String error = null;
 
         public TransactionsBuilder (int timestamp, String description) {
             this.timestamp = timestamp;
@@ -90,9 +102,25 @@ public class Transactions {
             return this;
         }
 
+        public TransactionsBuilder setCurrency(String currency) {
+            this.currency = currency;
+            return this;
+        }
+
+        public TransactionsBuilder setInvolvedAccounts(List<String> involvedAccounts) {
+            this.involvedAccounts = involvedAccounts;
+            return this;
+        }
+
+        public TransactionsBuilder setError(String error) {
+            this.error = error;
+            return this;
+        }
+
         public Transactions build() {
             return new Transactions(this);
         }
+
 
         public String getAmount() {
             return amount;
@@ -144,6 +172,18 @@ public class Transactions {
 
         public double getAmount_online() {
             return amount_online;
+        }
+
+        public String getCurrency() {
+            return currency;
+        }
+
+        public List<String> getInvolvedAccounts() {
+            return involvedAccounts;
+        }
+
+        public String getError() {
+            return error;
         }
     }
 
@@ -233,5 +273,29 @@ public class Transactions {
 
     public void setAmount_online(double amount_online) {
         this.amount_online = amount_online;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public List<String> getInvolvedAccounts() {
+        return involvedAccounts;
+    }
+
+    public void setInvolvedAccounts(List<String> involvedAccounts) {
+        this.involvedAccounts = involvedAccounts;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 }

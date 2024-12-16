@@ -33,6 +33,7 @@ public class OneTimeCard implements Card {
                     String email, int timestamp, ArrayList<ExchangeRate> exchangeRates) {
         Transactions newTransaction;
         ExchangeRate exchangeRate = calculateExchangeRate(account, currency, exchangeRates);
+        exchangeRate.setRate(roundToTwoDecimalPlates(exchangeRate.getRate()));
         if (account.getBalance() * exchangeRate.getRate() < amount|| card.getStatus().equals("frozen")) {
             newTransaction = new Transactions.TransactionsBuilder(timestamp, "Insufficient funds").build();
             account.getTransactions().add(newTransaction);
@@ -41,7 +42,7 @@ public class OneTimeCard implements Card {
         newTransaction = new Transactions.TransactionsBuilder(timestamp, description)
                 .setAmount_online(amount * 1 / exchangeRate.getRate()).setCommerciant(commerciant).build();
         account.getTransactions().add(newTransaction);
-        account.setBalance(account.getBalance() - amount / exchangeRate.getRate());
+        account.setBalance(roundToTwoDecimalPlates(account.getBalance() - amount / exchangeRate.getRate()));
         account.getCards().remove(card);
         Card newCard = new OneTimeCard(generateCardNumber(), status);
         account.getCards().add(newCard);
@@ -83,5 +84,9 @@ public class OneTimeCard implements Card {
             }
         }
         return exchangeRate;
+    }
+
+    public double roundToTwoDecimalPlates(double value) {
+        return value * 100.00 / 100.00;
     }
 }

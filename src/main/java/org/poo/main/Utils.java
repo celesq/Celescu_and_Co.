@@ -23,6 +23,23 @@ public final class Utils {
                 return exchangeRate1;
             }
         }
+        ExchangeRate exchangeRate2 = new ExchangeRate(exchangeRate.getFrom(), exchangeRate.getTo(),
+                exchangeRate.getRate());
+        for (ExchangeRate exchangeRate1 : exchangeRates) {
+            if (exchangeRate1.getTo().equals(account.getCurrency())) {
+                exchangeRate2.setFrom(exchangeRate1.getFrom());
+                exchangeRate2.setTo(exchangeRate1.getTo());
+                exchangeRate2.setRate(1 / exchangeRate1.getRate());
+            }
+        }
+        for (ExchangeRate exchangeRate1 : exchangeRates) {
+            if (exchangeRate1.getFrom().equals(exchangeRate2.getFrom()) && exchangeRate1.getTo().equals(currency)) {
+                exchangeRate2.setFrom(exchangeRate1.getFrom());
+                exchangeRate2.setTo(exchangeRate1.getTo());
+                exchangeRate2.setRate(exchangeRate2.getRate() * exchangeRate1.getRate());
+                return exchangeRate2;
+            }
+        }
         for (ExchangeRate exchangeRate1 : exchangeRates) {
             if (exchangeRate1.getFrom().equals(account.getCurrency()) || exchangeRate1.getTo().equals(currency)) {
                 exchangeRate.setFrom(exchangeRate1.getFrom());

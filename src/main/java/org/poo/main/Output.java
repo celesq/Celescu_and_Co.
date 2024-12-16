@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 import static org.poo.utils.Utils.*;
 
@@ -199,7 +196,11 @@ public class Output {
                             removedAccount = account;
                             objectNode1.put("success", "Account deleted");
                         } else {
-                            objectNode1.put("error", "Account couldn't be deleted - see org.poo.transactions for details");
+                            objectNode1.put("error", "Account couldn't be deleted - " +
+                                    "see org.poo.transactions for details");
+                            Transactions newTransaction = new Transactions.TransactionsBuilder(timestamp,
+                                    "Account couldn't be deleted - there are funds remaining").build();
+                            account.getTransactions().add(newTransaction);
                         }
                         objectNode1.put("timestamp", timestamp);
                         objectNode.put("output", objectNode1);
@@ -218,7 +219,7 @@ public class Output {
         for (User user : users) {
             for (Account account : user.getAccounts()) {
                 if (account.getIban().equals(Iban)) {
-                    boolean ok = account.changeInterestRate(interestRate);
+                    boolean ok = account.changeInterestRate(interestRate, timestamp);
                     if (!ok) {
                         ObjectNode objectNode = new ObjectMapper().createObjectNode();
                         objectNode.put("command", "changeInterestRate");
@@ -449,15 +450,23 @@ public class Output {
         objectNode.put("command", command);
         for (User user : users) {
             if (user.getEmail().equals(email)) {
+                ArrayNode arrayNode = new ObjectMapper().createArrayNode();
+                List<Transactions> allTransactions = new ArrayList<>();
                 for (Account account : user.getAccounts()) {
-                    ArrayNode arrayNode = new ObjectMapper().createArrayNode();
-                    for (Transactions transaction : account.getTransactions()) {
-                        ObjectNode objectNode2 = new ObjectMapper().createObjectNode();
-                        putTransactionInObject(objectNode2, transaction);
-                        arrayNode.add(objectNode2);
-                    }
-                    objectNode.put("output", arrayNode);
+                    allTransactions.addAll(account.getTransactions());
                 }
+                allTransactions.sort(new Comparator<Transactions>() {
+                    @Override
+                    public int compare(Transactions o1, Transactions o2) {
+                        return o1.getTimestamp() - o2.getTimestamp();
+                    }
+                });
+                for (Transactions transaction : allTransactions) {
+                    ObjectNode objectNode2 = new ObjectMapper().createObjectNode();
+                    putTransactionInObject(objectNode2, transaction);
+                    arrayNode.add(objectNode2);
+                }
+                objectNode.put("output", arrayNode);
             }
         }
         objectNode.put("timestamp", timestamp);

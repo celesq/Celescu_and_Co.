@@ -105,7 +105,6 @@ public class SavingsAccount implements Account {
         newTransaction = new Transactions.TransactionsBuilder(timestamp, description).setSenderIban(Iban)
                 .setReceiverIban(recieverAccount.getIban()).setAmount(amount + " " + currency).setTransferType("sent").build();
         balance = balance - amount;
-        balance = roundToTwoDecimalPlates(balance);
         recieverAccount.setBalance(recieverAccount.getBalance() + amount * exchangeRate.getRate());
         transactions.add(newTransaction);
         recieverTransaction = new Transactions.TransactionsBuilder(timestamp, description).setSenderIban(Iban)
@@ -131,23 +130,25 @@ public class SavingsAccount implements Account {
         ExchangeRate exchangeRate = calculateExchangeRate(this, currency, exchangeRates);
         exchangeRate.setRate(roundToTwoDecimalPlates(exchangeRate.getRate()));
         balance = balance - amount * 1 / exchangeRate.getRate();
-        balance = roundToTwoDecimalPlates(balance);
         Transactions newTransaction;
         if (amount * people % 1 == 0) {
             newTransaction = new Transactions.TransactionsBuilder(timestamp, "Split payment of " +
-                    roundToTwoDecimalPlates(amount * people) + "0 " + currency).
+                    (amount * people) + "0 " + currency).
                     setAmount_online(amount).setCurrency(currency).setInvolvedAccounts(involvedAccounts) .build();
         } else {
             newTransaction = new Transactions.TransactionsBuilder(timestamp, "Split payment of " +
-                    roundToTwoDecimalPlates(amount * people) + " " + currency).setAmount_online(amount).
+                    (amount * people) + " " + currency).setAmount_online(amount).
                     setCurrency(currency).setInvolvedAccounts(involvedAccounts).build();
         }
         transactions.add(newTransaction);
     }
 
 
-    public boolean changeInterestRate(double interestRate) {
+    public boolean changeInterestRate(double interestRate, int timestamp) {
         this.interestRate = interestRate;
+        Transactions newTransaction = new Transactions.TransactionsBuilder(timestamp,
+                "Interest rate of the account changed to " + interestRate).build();
+        getTransactions().add(newTransaction);
         return true;
     }
 
@@ -175,42 +176,7 @@ public class SavingsAccount implements Account {
 
     public ObjectNode makeSpendingsReport(int startTimeStamp, int endTimeStamp, int timestamp) {
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put("IBAN", Iban);
-        objectNode.put("balance", balance);
-        objectNode.put("currency", currency);
-        ArrayNode arrayNode = new ObjectMapper().createArrayNode();
-        Map<String, Double> commerciants = new HashMap<>();
-        List<String> commerciantNames = new ArrayList<>();
-        for (Transactions transactions : transactions) {
-            if (transactions.getTimestamp() >= startTimeStamp && transactions.getTimestamp() <= endTimeStamp
-                    && transactions.getDescription().equals("Card payment")) {
-                ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
-                Output.putTransactionInObject(objectNode1, transactions);
-                arrayNode.add(objectNode1);
-                if (commerciants.containsKey(transactions.getCurrency())) {
-                    double amountSpent = commerciants.get(transactions.getCommerciant());
-                    commerciants.replace(transactions.getCommerciant(), amountSpent, amountSpent
-                            + transactions.getAmount_online());
-                } else {
-                    commerciants.putIfAbsent(transactions.getCommerciant(), transactions.getAmount_online());
-                }
-                commerciantNames.add(transactions.getCommerciant());
-            }
-        }
-        ArrayNode arrayNode1 = new ObjectMapper().createArrayNode();
-        commerciantNames.sort(new Comparator<String>() {
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
-        for (String commerciantName : commerciantNames) {
-            ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
-            objectNode1.put("commerciant", commerciantName);
-            objectNode1.put("total", commerciants.get(commerciantName));
-            arrayNode1.add(objectNode1);
-        }
-        objectNode.put("transactions", arrayNode);
-        objectNode.put("commerciants", arrayNode1);
+        objectNode.put("error", "This kind of report is not supported for a saving account");
         return objectNode;
     }
 }

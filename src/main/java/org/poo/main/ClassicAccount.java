@@ -95,7 +95,6 @@ public class ClassicAccount implements Account {
         newTransaction = new Transactions.TransactionsBuilder(timestamp, description).setSenderIban(Iban)
                 .setReceiverIban(recieverAccount.getIban()).setAmount(amount + " " + currency).setTransferType("sent").build();
         balance = balance - amount;
-        balance = roundToTwoDecimalPlates(balance);
         recieverAccount.setBalance(recieverAccount.getBalance() + amount * exchangeRate.getRate());
         transactions.add(newTransaction);
         recieverTransaction = new Transactions.TransactionsBuilder(timestamp, description).setSenderIban(Iban)
@@ -120,23 +119,22 @@ public class ClassicAccount implements Account {
                              ArrayList<ExchangeRate> exchangeRates, int timestamp, List<String> involvedAccounts) {
         amount = amount / people;
         ExchangeRate exchangeRate = calculateExchangeRate(this, currency, exchangeRates);
-        exchangeRate.setRate(roundToTwoDecimalPlates(exchangeRate.getRate()));
+        exchangeRate.setRate((exchangeRate.getRate()));
         balance = balance - amount * 1 / exchangeRate.getRate();
-        balance = roundToTwoDecimalPlates(balance);
         Transactions newTransaction;
         if (amount * people % 1 == 0) {
             newTransaction = new Transactions.TransactionsBuilder(timestamp, "Split payment of " +
-                    roundToTwoDecimalPlates(amount * people) + "0 " + currency).
+                    (amount * people) + "0 " + currency).
                     setAmount_online(amount).setCurrency(currency).setInvolvedAccounts(involvedAccounts) .build();
         } else {
             newTransaction = new Transactions.TransactionsBuilder(timestamp, "Split payment of " +
-                    roundToTwoDecimalPlates(amount * people) + " " + currency).setAmount_online(amount).
+                    (amount * people) + " " + currency).setAmount_online(amount).
                     setCurrency(currency).setInvolvedAccounts(involvedAccounts).build();
         }
         transactions.add(newTransaction);
     }
 
-    public boolean changeInterestRate(double interestRate) {
+    public boolean changeInterestRate(double interestRate, int timestamp) {
         return false;
     }
 

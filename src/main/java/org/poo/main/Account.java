@@ -47,11 +47,12 @@ public interface Account {
                              ArrayList<ExchangeRate> exchangeRates, int timestamp, List<String> involvedAccounts);
 
 
-    public boolean changeInterestRate(double interestRate);
+    public boolean changeInterestRate(double interestRate, int timestamp);
 
     public boolean addInterest();
 
     public ObjectNode makeReport(int startTimeStamp, int endTimeStamp, int timestamp);
 
     public ObjectNode makeSpendingsReport(int startTimeStamp, int endTimeStamp, int timestamp);
+
 }

@@ -1,66 +1,57 @@
 package org.poo.main;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public final class Utils {
 
-    public static ExchangeRate calculateExchangeRate(Account account, String currency, ArrayList<ExchangeRate> exchangeRates) {
-        ExchangeRate exchangeRate = new ExchangeRate(account.getCurrency(), currency, 1);
-        if (account.getCurrency().equals(currency)) {
-            return exchangeRate;
-        }
-        for (ExchangeRate exchangeRate1 : exchangeRates) {
-            if (exchangeRate1.getFrom().equals(currency) && exchangeRate1.getTo().equals(account.getCurrency())) {
-                String aux = exchangeRate.getFrom();
-                exchangeRate.setFrom(exchangeRate1.getTo());
-                exchangeRate.setTo(aux);
-                exchangeRate.setRate(1 / exchangeRate1.getRate());
-                return exchangeRate;
-            }
-        }
-        for (ExchangeRate exchangeRate1 : exchangeRates) {
-            if (exchangeRate1.getFrom().equals(account.getCurrency()) && exchangeRate1.getTo().equals(currency)) {
-                return exchangeRate1;
-            }
-        }
-        ExchangeRate exchangeRate2 = new ExchangeRate(exchangeRate.getFrom(), exchangeRate.getTo(),
-                exchangeRate.getRate());
-        for (ExchangeRate exchangeRate1 : exchangeRates) {
-            if (exchangeRate1.getTo().equals(account.getCurrency())) {
-                exchangeRate2.setFrom(exchangeRate1.getFrom());
-                exchangeRate2.setTo(exchangeRate1.getTo());
-                exchangeRate2.setRate(1 / exchangeRate1.getRate());
-            }
-        }
-        for (ExchangeRate exchangeRate1 : exchangeRates) {
-            if (exchangeRate1.getFrom().equals(exchangeRate2.getFrom()) && exchangeRate1.getTo().equals(currency)) {
-                exchangeRate2.setFrom(exchangeRate1.getFrom());
-                exchangeRate2.setTo(exchangeRate1.getTo());
-                exchangeRate2.setRate(exchangeRate2.getRate() * exchangeRate1.getRate());
-                return exchangeRate2;
-            }
-        }
-        for (ExchangeRate exchangeRate1 : exchangeRates) {
-            if (exchangeRate1.getFrom().equals(account.getCurrency()) || exchangeRate1.getTo().equals(currency)) {
-                exchangeRate.setFrom(exchangeRate1.getFrom());
-                exchangeRate.setTo(exchangeRate1.getTo());
-                exchangeRate.setRate(exchangeRate.getRate() * exchangeRate1.getRate());
-            }
-        }
-        if (exchangeRate.getFrom().equals(account.getCurrency()) && exchangeRate.getTo().equals(currency)) {
-            return exchangeRate;
-        }
-        for (ExchangeRate exchangeRate1 : exchangeRates) {
-            if (exchangeRate1.getTo().equals(account.getCurrency()) || exchangeRate1.getFrom().equals(currency)) {
-                exchangeRate.setFrom(exchangeRate1.getTo());
-                exchangeRate.setTo(exchangeRate1.getFrom());
-                exchangeRate.setRate(exchangeRate.getRate() * 1 / exchangeRate1.getRate());
-            }
-        }
-        return exchangeRate;
-    }
-
     public static double roundToTwoDecimalPlates(double value) {
         return value * 100.00 / 100.00;
+    }
+
+    public static void putTransactionInObject(ObjectNode objectNode, Transactions transactions) {
+        objectNode.put("timestamp", transactions.getTimestamp());
+        objectNode.put("description", transactions.getDescription());
+        if (transactions.getCard() != null) {
+            objectNode.put("card", transactions.getCard());
+        }
+        if (transactions.getCardHolder() != null) {
+            objectNode.put("cardHolder", transactions.getCardHolder());
+        }
+        if (transactions.getAccount() != null) {
+            objectNode.put("account", transactions.getAccount());
+        }
+        if (transactions.getSenderIban() != null) {
+            objectNode.put("senderIBAN", transactions.getSenderIban());
+        }
+        if (transactions.getReceiverIban() != null) {
+            objectNode.put("receiverIBAN", transactions.getReceiverIban());
+        }
+        if (transactions.getCurrency() != null) {
+            objectNode.put("currency", transactions.getCurrency());
+        }
+        if (transactions.getAmount() != null) {
+            objectNode.put("amount", transactions.getAmount());
+        }
+        if (transactions.getAmount_online() != 0) {
+            objectNode.put("amount", transactions.getAmount_online());
+        }
+        if (transactions.getInvolvedAccounts() != null) {
+            ArrayNode arrayNode2 = new ObjectMapper().createArrayNode();
+            for (String accounts : transactions.getInvolvedAccounts()) {
+                arrayNode2.add(accounts);
+            }
+            objectNode.put("involvedAccounts", arrayNode2);
+        }
+        if (transactions.getError() != null) {
+            objectNode.put("error", transactions.getError());
+        }
+        if (transactions.getTransferType() != null) {
+            objectNode.put("transferType", transactions.getTransferType());
+        }
+        if (transactions.getCommerciant() != null) {
+            objectNode.put("commerciant", transactions.getCommerciant());
+        }
     }
 }

@@ -1,23 +1,26 @@
 package org.poo.main;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-import static org.poo.utils.Utils.*;
+import static org.poo.main.Utils.putTransactionInObject;
+import static org.poo.utils.Utils.generateCardNumber;
+import static org.poo.utils.Utils.generateIBAN;
 
 public class Output {
-    private ArrayList<User> users;
-    private ArrayList<ExchangeRate> exchangeRates;
-    private ArrayList<Comerciant> comerciants;
+    private List<User> users;
+    private List<ExchangeRate> exchangeRates;
+    private List<Comerciant> comerciants;
     private CommandInput[] commandInput;
     private ArrayNode output;
 
-    public Output(ArrayList<User> users, ArrayList<ExchangeRate> exchangeRates, ArrayList<Comerciant> comerciants,
+    public Output(List<User> users, List<ExchangeRate> exchangeRates, List<Comerciant> comerciants,
                   CommandInput[] commandInput, ArrayNode output) {
         this.users = users;
         this.exchangeRates = exchangeRates;
@@ -26,27 +29,27 @@ public class Output {
         this.output = output;
     }
 
-    public ArrayList<Comerciant> getComerciants() {
+    public List<Comerciant> getComerciants() {
         return comerciants;
     }
 
-    public void setComerciants(ArrayList<Comerciant> comerciants) {
+    public void setComerciants(List<Comerciant> comerciants) {
         this.comerciants = comerciants;
     }
 
-    public ArrayList<ExchangeRate> getExchangeRates() {
+    public List<ExchangeRate> getExchangeRates() {
         return exchangeRates;
     }
 
-    public void setExchangeRates(ArrayList<ExchangeRate> exchangeRates) {
+    public void setExchangeRates(List<ExchangeRate> exchangeRates) {
         this.exchangeRates = exchangeRates;
     }
 
-    public ArrayList<User> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(ArrayList<User> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 
@@ -68,61 +71,50 @@ public class Output {
 
     public void iterateCommands() {
         for (int i = 0; i < commandInput.length; i++) {
-            if (commandInput[i].getCommand().equals("printUsers")) {
-                printUsers(commandInput[i].getCommand(), commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("addAccount")) {
-                addAccount(commandInput[i].getCommand(), commandInput[i].getEmail(), commandInput[i].getCurrency(),
+            switch (commandInput[i].getCommand()) {
+                case "printUsers" -> printUsers(commandInput[i].getCommand(), commandInput[i].getTimestamp());
+                case "addAccount" -> addAccount(commandInput[i].getEmail(), commandInput[i].getCurrency(),
                         commandInput[i].getAccountType(), commandInput[i].getTimestamp(),
                         commandInput[i].getInterestRate());
-            } else if (commandInput[i].getCommand().equals("createCard")) {
-                createCard(commandInput[i].getCommand(), commandInput[i].getAccount(), commandInput[i].getEmail(),
+                case "createCard" -> createCard(commandInput[i].getAccount(), commandInput[i].getEmail(),
                         commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("addFunds")) {
-                addFunds(commandInput[i].getCommand(), commandInput[i].getAccount(), commandInput[i].getAmount(),
+                case "addFunds" -> addFunds(commandInput[i].getAccount(), commandInput[i].getAmount(),
                         commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("deleteAccount")) {
-                deleteAccount(commandInput[i].getCommand(), commandInput[i].getEmail(), commandInput[i].getAccount(),
+                case "deleteAccount" -> deleteAccount(commandInput[i].getCommand(), commandInput[i].getEmail(),
+                        commandInput[i].getAccount(),
                         commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("deleteCard")) {
-                deleteCard(commandInput[i].getCommand(), commandInput[i].getCardNumber(),
+                case "deleteCard" -> deleteCard(commandInput[i].getCardNumber(), commandInput[i].getTimestamp());
+                case "createOneTimeCard" -> createOneTimeCard(commandInput[i].getAccount(), commandInput[i].getEmail(),
                         commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("createOneTimeCard")) {
-                createOneTimeCard(commandInput[i].getCommand(), commandInput[i].getAccount(), commandInput[i].getEmail(),
-                        commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("setMinBalance")) {
-                setMinBalance(commandInput[i].getCommand(), commandInput[i].getMinBalance(), commandInput[i].getAccount(),
-                        commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("checkCardStatus")) {
-                checkCardStatus(commandInput[i].getCommand(), commandInput[i].getCardNumber(),
-                        commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("payOnline")) {
-                payOnline(commandInput[i].getCommand(), commandInput[i].getCardNumber(), commandInput[i].getAmount(),
-                        commandInput[i].getCurrency(), commandInput[i].getTimestamp(), commandInput[i].getCommerciant()
-                        , commandInput[i].getEmail());
-            } else if (commandInput[i].getCommand().equals("sendMoney")) {
-                sendMoney(commandInput[i].getCommand(), commandInput[i].getAccount(), commandInput[i].getAmount(),
-                        commandInput[i].getReceiver(),commandInput[i].getTimestamp(), commandInput[i].getDescription(),
-                        commandInput[i].getEmail());
-            } else if (commandInput[i].getCommand().equals("printTransactions")) {
-                printTransactions(commandInput[i].getCommand(), commandInput[i].getEmail(),
-                        commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("setAlias")) {
-                setAlias(commandInput[i].getCommand(), commandInput[i].getEmail(), commandInput[i].getAlias(),
-                        commandInput[i].getAccount());
-            } else if (commandInput[i].getCommand().equals("splitPayment")) {
-                splitPayment(commandInput[i].getCommand(), commandInput[i].getAccounts(), commandInput[i].getCurrency(),
-                        commandInput[i].getTimestamp(), commandInput[i].getAmount());
-            } else if (commandInput[i].getCommand().equals("changeInterestRate")) {
-                changeInterestRate(commandInput[i].getAccount(), commandInput[i].getInterestRate(),
-                        commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("addInterest")) {
-                addInterest(commandInput[i].getCommand(), commandInput[i].getAccount(), commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("report")) {
-                report(commandInput[i].getCommand(), commandInput[i].getStartTimestamp(),
-                        commandInput[i].getEndTimestamp(), commandInput[i].getAccount(), commandInput[i].getTimestamp());
-            } else if (commandInput[i].getCommand().equals("spendingsReport")) {
-                spendingsReport(commandInput[i].getStartTimestamp(), commandInput[i].getEndTimestamp(),
+                case "setMinBalance" -> setMinBalance(commandInput[i].getCommand(), commandInput[i].getMinBalance(),
                         commandInput[i].getAccount(), commandInput[i].getTimestamp());
+                case "checkCardStatus" -> checkCardStatus(commandInput[i].getCommand(), commandInput[i].getCardNumber(),
+                        commandInput[i].getTimestamp());
+                case "payOnline" -> payOnline(commandInput[i].getCommand(), commandInput[i].getCardNumber(),
+                        commandInput[i].getAmount(),
+                        commandInput[i].getCurrency(), commandInput[i].getTimestamp(),
+                        commandInput[i].getCommerciant()
+                        , commandInput[i].getEmail());
+                case "sendMoney" -> sendMoney(commandInput[i].getCommand(), commandInput[i].getAccount(),
+                        commandInput[i].getAmount(),
+                        commandInput[i].getReceiver(), commandInput[i].getTimestamp(),
+                        commandInput[i].getDescription(),
+                        commandInput[i].getEmail());
+                case "printTransactions" -> printTransactions(commandInput[i].getCommand(), commandInput[i].getEmail(),
+                        commandInput[i].getTimestamp());
+                case "setAlias" ->
+                        setAlias(commandInput[i].getEmail(), commandInput[i].getAlias(), commandInput[i].getAccount());
+                case "splitPayment" -> splitPayment(commandInput[i].getAccounts(), commandInput[i].getCurrency(),
+                        commandInput[i].getTimestamp(), commandInput[i].getAmount());
+                case "changeInterestRate" ->
+                        changeInterestRate(commandInput[i].getAccount(), commandInput[i].getInterestRate(),
+                                commandInput[i].getTimestamp());
+                case "addInterest" -> addInterest(commandInput[i].getAccount(), commandInput[i].getTimestamp());
+                case "report" -> report(commandInput[i].getStartTimestamp(), commandInput[i].getEndTimestamp(),
+                        commandInput[i].getAccount(), commandInput[i].getTimestamp());
+                case "spendingsReport" ->
+                        spendingsReport(commandInput[i].getStartTimestamp(), commandInput[i].getEndTimestamp(),
+                                commandInput[i].getAccount(), commandInput[i].getTimestamp());
             }
         }
     }
@@ -162,16 +154,12 @@ public class Output {
         output.add(objectNode);
     }
 
-    public void addAccount(String command, String email, String currency, String accountType, int timestamp, double interestRate) {
+    public void addAccount(String email, String currency, String accountType, int timestamp, double interestRate) {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
                 Account account;
                 String Iban = generateIBAN();
-                if (accountType.equals("savings")) {
-                    account = new SavingsAccount(Iban, 0, currency, accountType, interestRate);
-                } else {
-                    account = new ClassicAccount(Iban, 0, currency, accountType);
-                }
+                account = AccountFactory.createAccount(accountType, Iban, currency, interestRate);
                 Transactions transaction = new Transactions.
                         TransactionsBuilder(timestamp, "New account created").build();
                 account.getTransactions().add(transaction);
@@ -235,7 +223,7 @@ public class Output {
         }
     }
 
-    public void addInterest(String command, String Iban, int timestamp) {
+    public void addInterest(String Iban, int timestamp) {
         for (User user : users) {
             for (Account account : user.getAccounts()) {
                 if (account.getIban().equals(Iban)) {
@@ -255,7 +243,7 @@ public class Output {
         }
     }
 
-    public void createCard(String command, String Iban, String email, int timestamp) {
+    public void createCard(String Iban, String email, int timestamp) {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
                 for (Account account : user.getAccounts()) {
@@ -270,7 +258,7 @@ public class Output {
         }
     }
 
-    public void createOneTimeCard(String command, String Iban, String email, int timestamp) {
+    public void createOneTimeCard(String Iban, String email, int timestamp) {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
                 for (Account account : user.getAccounts()) {
@@ -292,7 +280,7 @@ public class Output {
         account.getTransactions().add(transaction);
     }
 
-    public void deleteCard(String command, String cardNumber, int timestamp) {
+    public void deleteCard(String cardNumber, int timestamp) {
         Card removedCard = null;
         for (User user : users) {
             for (Account account : user.getAccounts()) {
@@ -310,7 +298,7 @@ public class Output {
         }
     }
 
-    public void addFunds(String command, String Iban, double amount, int timestamp) {
+    public void addFunds(String Iban, double amount, int timestamp) {
         for (User user : users) {
             for (Account account : user.getAccounts()) {
                 if (account.getIban().equals(Iban)) {
@@ -353,27 +341,15 @@ public class Output {
                 }
             }
         }
-        if (checkedCard == null) {
+        try {
+            checkedCard.update(checkedAccount, timestamp);
+        } catch (Exception e) {
             ObjectNode objectnode1 = new ObjectMapper().createObjectNode();
             objectnode1.put("timestamp", timestamp);
             objectnode1.put("description", "Card not found");
             objectNode.put("output", objectnode1);
             objectNode.put("timestamp", timestamp);
             output.add(objectNode);
-        } else {
-            if (checkedAccount.getBalance() <= checkedAccount.getMinBalance()) {
-                checkedCard.setStatus("frozen");
-                Transactions transaction = new Transactions.TransactionsBuilder(timestamp
-                        , "You have reached the minimum amount of funds, the card will be frozen").build();
-                checkedAccount.getTransactions().add(transaction);
-            } else if (checkedAccount.getBalance() - checkedAccount.getMinBalance() <= 30) {
-                checkedCard.setStatus("warning");
-                Transactions transaction = new Transactions.TransactionsBuilder(timestamp
-                        , "Card warining").build();
-                checkedAccount.getTransactions().add(transaction);
-            } else {
-                return;
-            }
         }
     }
 
@@ -473,52 +449,7 @@ public class Output {
         output.add(objectNode);
     }
 
-    public static void putTransactionInObject(ObjectNode objectNode, Transactions transactions) {
-        objectNode.put("timestamp", transactions.getTimestamp());
-        objectNode.put("description", transactions.getDescription());
-        if (transactions.getCard() != null) {
-            objectNode.put("card", transactions.getCard());
-        }
-        if (transactions.getCardHolder() != null) {
-            objectNode.put("cardHolder", transactions.getCardHolder());
-        }
-        if (transactions.getAccount() != null) {
-            objectNode.put("account", transactions.getAccount());
-        }
-        if (transactions.getSenderIban() != null) {
-            objectNode.put("senderIBAN", transactions.getSenderIban());
-        }
-        if (transactions.getReceiverIban() != null) {
-            objectNode.put("receiverIBAN", transactions.getReceiverIban());
-        }
-        if (transactions.getCurrency() != null) {
-            objectNode.put("currency", transactions.getCurrency());
-        }
-        if (transactions.getAmount() != null) {
-            objectNode.put("amount", transactions.getAmount());
-        }
-        if (transactions.getAmount_online() != 0) {
-            objectNode.put("amount", transactions.getAmount_online());
-        }
-        if (transactions.getInvolvedAccounts() != null) {
-            ArrayNode arrayNode2 = new ObjectMapper().createArrayNode();
-            for (String accounts : transactions.getInvolvedAccounts()) {
-                arrayNode2.add(accounts);
-            }
-            objectNode.put("involvedAccounts", arrayNode2);
-        }
-        if (transactions.getError() != null) {
-            objectNode.put("error", transactions.getError());
-        }
-        if (transactions.getTransferType() != null) {
-            objectNode.put("transferType", transactions.getTransferType());
-        }
-        if (transactions.getCommerciant() != null) {
-            objectNode.put("commerciant", transactions.getCommerciant());
-        }
-    }
-
-    public void setAlias(String command, String email, String alias, String Iban) {
+    public void setAlias(String email, String alias, String Iban) {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
                 user.getAliases().putIfAbsent(alias, Iban);
@@ -526,7 +457,7 @@ public class Output {
         }
     }
 
-    public void splitPayment(String command, List<String> accountsInput, String currency, int timestamp, double amount) {
+    public void splitPayment(List<String> accountsInput, String currency, int timestamp, double amount) {
         List<Account> accountsForSplit = new ArrayList<>();
         for (String accountInput : accountsInput) {
             for (User user : users) {
@@ -544,7 +475,8 @@ public class Output {
             }
         }
         if (accountWhichCouldNotPay != null) {
-            errorSplittingPayment(accountsForSplit, accountWhichCouldNotPay, amount, currency, accountsForSplit.size(), timestamp,
+            errorSplittingPayment(accountsForSplit, accountWhichCouldNotPay, amount, currency, accountsForSplit.size(),
+                    timestamp,
                     accountsInput);
             return;
         }
@@ -572,7 +504,7 @@ public class Output {
         }
     }
 
-    public void report(String command, int startTimeStamp, int endTimeStamp, String Iban, int timestamp) {
+    public void report(int startTimeStamp, int endTimeStamp, String Iban, int timestamp) {
         int found = 0;
         ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
         objectNode1.put("command", "report");

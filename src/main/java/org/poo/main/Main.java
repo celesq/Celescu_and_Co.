@@ -1,25 +1,17 @@
 package org.poo.main;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.checker.Checker;
 import org.poo.checker.CheckerConstants;
-import org.poo.fileio.ExchangeInput;
-import org.poo.fileio.ObjectInput;
-import org.poo.utils.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 
-import static org.poo.utils.Utils.resetRandom;
 
 /**
  * The entry point to this homework. It runs the checker that tests your implementation.
@@ -73,57 +65,7 @@ public final class  Main {
      */
     public static void action(final String filePath1,
                               final String filePath2) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        File file = new File(CheckerConstants.TESTS_PATH + filePath1);
-        ObjectInput inputData = objectMapper.readValue(file, ObjectInput.class);
-
-        ArrayNode output = objectMapper.createArrayNode();
-
-        ArrayList<User> users = new ArrayList<>();
-        for (int i = 0; i < inputData.getUsers().length; i++) {
-            User newUser = new User(inputData.getUsers()[i].getFirstName(), inputData.getUsers()[i].getLastName(),inputData.getUsers()[i].getEmail());
-            users.add(newUser);
-        }
-
-        ArrayList<ExchangeRate>exchangeRates = new ArrayList<>();
-        for (int i = 0; i < inputData.getExchangeRates().length; i++) {
-            ExchangeRate exchangeRate = new ExchangeRate(inputData.getExchangeRates()[i].getFrom(), inputData.getExchangeRates()[i].getTo(), inputData.getExchangeRates()[i].getRate());
-            exchangeRates.add(exchangeRate);
-        }
-
-        ArrayList<Comerciant> comerciants = new ArrayList<>();
-        if (inputData.getCommerciants() != null) {
-            for (int i = 0; i < inputData.getCommerciants().length; i++) {
-                Comerciant comerciant = new Comerciant(inputData.getCommerciants()[i].getId(), inputData.getCommerciants()[i].getDescription(), inputData.getCommerciants()[i].getCommerciants());
-                comerciants.add(comerciant);
-            }
-        }
-
-        resetRandom();
-        Output output1 = new Output(users, exchangeRates, comerciants, inputData.getCommands(), output);
-        output1.iterateCommands();
-
-        /*
-         * TODO Implement your function here
-         *
-         * How to add output to the output array?
-         * There are multiple ways to do this, here is one example:
-         *
-         * ObjectMapper mapper = new ObjectMapper();
-         *
-         * ObjectNode objectNode = mapper.createObjectNode();
-         * objectNode.put("field_name", "field_value");
-         *
-         * ArrayNode arrayNode = mapper.createArrayNode();
-         * arrayNode.add(objectNode);
-         *
-         * output.add(arrayNode);
-         * output.add(objectNode);
-         *
-         */
-
-        ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-        objectWriter.writeValue(new File(filePath2), output);
+        Start.parseDataAndStartGame(filePath1, filePath2);
     }
 
     /**

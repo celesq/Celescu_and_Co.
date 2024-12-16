@@ -1,0 +1,23 @@
+commit 2a19bc2d5552808c661428c49f3c2e63121cb786
+Author: celesq <raresutuboss@gmail.com>
+Date:   Mon Dec 16 17:02:46 2024 +0200
+
+    Finished the functionality for the whole project, including the large inputs
+
+commit ab2d8216116312eb816d036878f2feb934ed4d44
+Author: celesq <raresutuboss@gmail.com>
+Date:   Mon Dec 16 12:29:28 2024 +0200
+
+    Added all the functionalities
+
+commit 3819c5afb5f27e2f57b6bffcbad82bd4c5643a2c
+Author: celesq <raresutuboss@gmail.com>
+Date:   Sat Dec 14 21:23:11 2024 +0200
+
+    Added the basic functionalities
+
+commit d6dc2501b126d4e5c5e924a0e8c7246d2b049f72
+Author: celesq <raresutuboss@gmail.com>
+Date:   Wed Dec 4 15:20:44 2024 +0200
+
+    Start

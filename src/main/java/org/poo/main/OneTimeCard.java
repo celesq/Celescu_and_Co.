@@ -1,38 +1,21 @@
 package org.poo.main;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import static org.poo.main.Utils.*;
-import static org.poo.utils.Utils.*;
+import static org.poo.main.ExchangeRate.calculateExchangeRate;
+import static org.poo.main.Utils.roundToTwoDecimalPlates;
+import static org.poo.utils.Utils.generateCardNumber;
 
-public class OneTimeCard implements Card {
-    private String number;
-    private String status;
+public class OneTimeCard extends ClassicCard implements Card {
 
     public OneTimeCard(String number, String status) {
-        this.number = number;
-        this.status = status;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+        super(number, status);
     }
 
     @Override
     public void pay(Account account, Card card, double amount, String currency ,String description, String commerciant,
-                    String email, int timestamp, ArrayList<ExchangeRate> exchangeRates) {
+                    String email, int timestamp, List<ExchangeRate> exchangeRates) {
         Transactions newTransaction;
         ExchangeRate exchangeRate = calculateExchangeRate(account, currency, exchangeRates);
         exchangeRate.setRate(roundToTwoDecimalPlates(exchangeRate.getRate()));
@@ -50,11 +33,12 @@ public class OneTimeCard implements Card {
                 setAccount(account.getIban()).build();
         account.getTransactions().add(cardDestroyTransaction);
         account.getCards().remove(card);
-        Card newCard = new OneTimeCard(generateCardNumber(), status);
+        Card newCard = new OneTimeCard(generateCardNumber(), getStatus());
         account.getCards().add(newCard);
         Transactions newCardCreated = new Transactions.TransactionsBuilder(timestamp, "New card created")
                 .setAccount(account.getIban()).setCard(newCard.getNumber()).setCardHolder(email).build();
         account.getTransactions().add(newCardCreated);
+        card.update(account, timestamp);
     }
 
 }

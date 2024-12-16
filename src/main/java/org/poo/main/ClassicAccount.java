@@ -1,29 +1,30 @@
 package org.poo.main;
 
-import java.util.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import static org.poo.main.Utils.calculateExchangeRate;
+import java.util.*;
+
+import static org.poo.main.ExchangeRate.calculateExchangeRate;
+import static org.poo.main.Utils.putTransactionInObject;
 import static org.poo.main.Utils.roundToTwoDecimalPlates;
 
 
 public class ClassicAccount implements Account {
     private String Iban;
-    private double balance;
+    protected double balance;
     private String currency;
     private String accountType;
     private double minBalance;
     private ArrayList<Card> cards = new ArrayList<>();
     private ArrayList<Transactions> transactions = new ArrayList<>();
 
-    public ClassicAccount(String Iban, double balance, String currency, String accountType) {
+    public ClassicAccount(String Iban, String currency, String accountType) {
         this.Iban = Iban;
-        this.balance = balance;
         this.currency = currency;
         this.accountType = accountType;
+        balance = 0;
     }
 
     public String getAccountType() {
@@ -83,7 +84,7 @@ public class ClassicAccount implements Account {
     }
 
     public void sendMoney(String command, double amount, Account recieverAccount, int timestamp, String description,
-                          ArrayList<ExchangeRate> exchangeRates) {
+                          List<ExchangeRate> exchangeRates) {
         Transactions newTransaction, recieverTransaction;
         ExchangeRate exchangeRate = calculateExchangeRate(this, recieverAccount.getCurrency(), exchangeRates);
         exchangeRate.setRate(roundToTwoDecimalPlates(exchangeRate.getRate()));
@@ -106,7 +107,7 @@ public class ClassicAccount implements Account {
 
 
     public boolean checkEnoughForSplit(String currency, double amount, int people,
-                                       ArrayList<ExchangeRate> exchangeRates) {
+                                       List<ExchangeRate> exchangeRates) {
         amount = amount / people;
         ExchangeRate exchangeRate = calculateExchangeRate(this, currency, exchangeRates);
         if (balance < amount * 1 / exchangeRate.getRate()) {
@@ -116,7 +117,7 @@ public class ClassicAccount implements Account {
     }
 
     public void splitPayment(String currency, double amount, int people,
-                             ArrayList<ExchangeRate> exchangeRates, int timestamp, List<String> involvedAccounts) {
+                             List<ExchangeRate> exchangeRates, int timestamp, List<String> involvedAccounts) {
         amount = amount / people;
         ExchangeRate exchangeRate = calculateExchangeRate(this, currency, exchangeRates);
         exchangeRate.setRate((exchangeRate.getRate()));
@@ -151,7 +152,7 @@ public class ClassicAccount implements Account {
         for (Transactions transactions : transactions) {
             if (transactions.getTimestamp() >= startTimeStamp && transactions.getTimestamp() <= endTimeStamp) {
                 ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
-                Output.putTransactionInObject(objectNode1, transactions);
+                putTransactionInObject(objectNode1, transactions);
                 arrayNode.add(objectNode1);
             }
         }
@@ -171,7 +172,7 @@ public class ClassicAccount implements Account {
             if (transactions.getTimestamp() >= startTimeStamp && transactions.getTimestamp() <= endTimeStamp
                     && transactions.getDescription().equals("Card payment")) {
                 ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
-                Output.putTransactionInObject(objectNode1, transactions);
+                putTransactionInObject(objectNode1, transactions);
                 arrayNode.add(objectNode1);
                 if (commerciants.containsKey(transactions.getCurrency())) {
                     double amountSpent = commerciants.get(transactions.getCommerciant());

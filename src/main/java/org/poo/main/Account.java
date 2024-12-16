@@ -1,11 +1,9 @@
 package org.poo.main;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public interface Account {
 
@@ -38,13 +36,13 @@ public interface Account {
     public void setMinBalance(double minBalance);
 
     public void sendMoney(String command, double amount, Account recieverAccount, int timestamp, String description,
-                          ArrayList<ExchangeRate> exchangeRates);
+                          List<ExchangeRate> exchangeRates);
 
     public boolean checkEnoughForSplit(String currency, double amount, int people,
-                                       ArrayList<ExchangeRate> exchangeRates);
+                                       List<ExchangeRate> exchangeRates);
 
     public void splitPayment(String currency, double amount, int people,
-                             ArrayList<ExchangeRate> exchangeRates, int timestamp, List<String> involvedAccounts);
+                             List<ExchangeRate> exchangeRates, int timestamp, List<String> involvedAccounts);
 
 
     public boolean changeInterestRate(double interestRate, int timestamp);

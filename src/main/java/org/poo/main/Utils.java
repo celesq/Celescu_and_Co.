@@ -6,11 +6,23 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public final class Utils {
 
-    public static double roundToTwoDecimalPlates(double value) {
-        return value * 100.00 / 100.00;
+    private static final double ROUND = 100.00;
+    /**
+     *
+     * @param value value to be rounded
+     * @return rounded value
+     */
+    public static double roundToTwoDecimalPlates(final double value) {
+        return value * ROUND / ROUND;
     }
 
-    public static void putTransactionInObject(ObjectNode objectNode, Transactions transactions) {
+    /**
+     *
+     * @param objectNode object node which will be used
+     * @param transactions transaction to be put in the object node
+     */
+    public static void putTransactionInObject(final ObjectNode objectNode,
+                                              final Transactions transactions) {
         objectNode.put("timestamp", transactions.getTimestamp());
         objectNode.put("description", transactions.getDescription());
         if (transactions.getCard() != null) {
@@ -34,8 +46,8 @@ public final class Utils {
         if (transactions.getAmount() != null) {
             objectNode.put("amount", transactions.getAmount());
         }
-        if (transactions.getAmount_online() != 0) {
-            objectNode.put("amount", transactions.getAmount_online());
+        if (transactions.getAmountOnline() != 0) {
+            objectNode.put("amount", transactions.getAmountOnline());
         }
         if (transactions.getInvolvedAccounts() != null) {
             ArrayNode arrayNode2 = new ObjectMapper().createArrayNode();

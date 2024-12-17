@@ -1,18 +1,43 @@
 package org.poo.main;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface Card extends BalanceObserver {
 
-    public String getNumber();
+    /**
+     * @return card number
+     */
+    String getNumber();
 
-    public void setNumber(String number);
+    /**
+     * @param number setter
+     */
+    void setNumber(String number);
 
-    public String getStatus();
+    /**
+     *
+     * @return card status
+     */
+    String getStatus();
 
-    public void setStatus(String status);
+    /**
+     *
+     * @param status for the card
+     */
+    void setStatus(String status);
 
-    public void pay(Account account , Card card, double amount, String currency , String description, String commerciant,
-                    String email, int timestamp, List<ExchangeRate> exchangeRates);
+    /**
+     *
+     * @param account account which pays
+     * @param card used card
+     * @param amount for payment
+     * @param currency used
+     * @param description for payment
+     * @param commerciant for payment
+     * @param email user's
+     * @param timestamp current timestamp
+     * @param exchangeRates bank's exchange rates
+     */
+    void pay(Account account, Card card, double amount, String currency, String description,
+             String commerciant, String email, int timestamp, List<ExchangeRate> exchangeRates);
 }

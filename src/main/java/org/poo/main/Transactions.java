@@ -14,12 +14,12 @@ public class Transactions {
     private String account;
     private String card;
     private String cardHolder;
-    private double amount_online;
+    private double amountOnline;
     private String currency;
     private List<String> involvedAccounts = new ArrayList<>();
     private String error;
 
-    public Transactions(TransactionsBuilder builder) {
+    public Transactions(final TransactionsBuilder builder) {
         this.timestamp = builder.timestamp;
         this.description = builder.description;
         this.amount = builder.amount;
@@ -30,7 +30,7 @@ public class Transactions {
         this.account = builder.account;
         this.card = builder.card;
         this.cardHolder = builder.cardHolder;
-        this.amount_online = builder.amount_online;
+        this.amountOnline = builder.amountOnline;
         this.currency = builder.currency;
         this.involvedAccounts = builder.involvedAccounts;
         this.error = builder.error;
@@ -47,255 +47,494 @@ public class Transactions {
         private String account = null;
         private String card = null;
         private String cardHolder = null;
-        private double amount_online = 0;
+        private double amountOnline = 0;
         private String currency = null;
         private List<String> involvedAccounts = null;
         private String error = null;
 
-        public TransactionsBuilder (int timestamp, String description) {
+        public TransactionsBuilder(final int timestamp, final String description) {
             this.timestamp = timestamp;
             this.description = description;
         }
 
-        public TransactionsBuilder setAmount(String amount) {
+        /**
+         *
+         * @param amount sets amount
+         * @return builder object
+         */
+        public TransactionsBuilder setAmount(final String amount) {
             this.amount = amount;
             return this;
         }
 
-        public TransactionsBuilder setSenderIban(String senderIban) {
+        /**
+         *
+         * @param senderIban sets sender IBAN
+         * @return builder object
+         */
+        public TransactionsBuilder setSenderIban(final String senderIban) {
             this.senderIban = senderIban;
             return this;
         }
 
-        public TransactionsBuilder setReceiverIban(String receiverIban) {
+        /**
+         *
+         * @param receiverIban
+         * @return builder object
+         */
+        public TransactionsBuilder setReceiverIban(final String receiverIban) {
             this.receiverIban = receiverIban;
             return this;
         }
 
-        public TransactionsBuilder setTransferType(String transferType) {
+        /**
+         *
+         * sets @param transferType
+         * @return builder object
+         */
+        public TransactionsBuilder setTransferType(final String transferType) {
             this.transferType = transferType;
             return this;
         }
 
-        public TransactionsBuilder setCommerciant(String commerciant) {
+        /**
+         *
+         * sets @param commerciant
+         * @return builder object
+         */
+        public TransactionsBuilder setCommerciant(final String commerciant) {
             this.commerciant = commerciant;
             return this;
         }
 
-        public TransactionsBuilder setAccount(String account) {
+        /**
+         *
+         * sets @param account
+         * @return builder object
+         */
+        public TransactionsBuilder setAccount(final String account) {
             this.account = account;
             return this;
         }
 
-        public TransactionsBuilder setCard(String card) {
+        /**
+         *
+         * sets @param card
+         * @return builder object
+         */
+        public TransactionsBuilder setCard(final String card) {
             this.card = card;
             return this;
         }
 
-        public TransactionsBuilder setCardHolder(String cardHolder) {
+        /**
+         *
+         * sets @param cardHolder
+         * @return builder object
+         */
+        public TransactionsBuilder setCardHolder(final String cardHolder) {
             this.cardHolder = cardHolder;
             return this;
         }
 
-        public TransactionsBuilder setAmount_online(double amount_online) {
-            this.amount_online = amount_online;
+        /**
+         *
+         * sets @param amount_online
+         * @return builder object
+         */
+        public TransactionsBuilder setAmountOnline(final double amountOnline) {
+            this.amountOnline = amountOnline;
             return this;
         }
 
-        public TransactionsBuilder setCurrency(String currency) {
+        /**
+         *
+         * sets @param currency
+         * @return builder object
+         */
+        public TransactionsBuilder setCurrency(final String currency) {
             this.currency = currency;
             return this;
         }
 
-        public TransactionsBuilder setInvolvedAccounts(List<String> involvedAccounts) {
+        /**
+         *
+         * sets @param involvedAccounts
+         * @return builder object
+         */
+        public TransactionsBuilder setInvolvedAccounts(final List<String> involvedAccounts) {
             this.involvedAccounts = involvedAccounts;
             return this;
         }
 
-        public TransactionsBuilder setError(String error) {
+        /**
+         *
+         * sets @param error
+         * @return builder object
+         */
+        public TransactionsBuilder setError(final String error) {
             this.error = error;
             return this;
         }
 
+        /**
+         *
+         * @return transactions
+         */
         public Transactions build() {
             return new Transactions(this);
         }
 
-
+        /**
+         *
+         * @return amount
+         */
         public String getAmount() {
             return amount;
         }
 
+        /**
+         *
+         * @return description
+         */
         public String getDescription() {
             return description;
         }
 
-        public void setDescription(String description) {
+        /**
+         *
+         * sets @param description
+         */
+        public void setDescription(final String description) {
             this.description = description;
         }
 
+        /**
+         *
+         * @return receiver's iban
+         */
         public String getReceiverIban() {
             return receiverIban;
         }
 
+        /**
+         *
+         * @return sender's iban
+         */
         public String getSenderIban() {
             return senderIban;
         }
 
+        /**
+         *
+         * @return timestamp
+         */
         public int getTimestamp() {
             return timestamp;
         }
 
-        public void setTimestamp(int timestamp) {
+        /**
+         *
+         * sets @param timestamp
+         */
+        public void setTimestamp(final int timestamp) {
             this.timestamp = timestamp;
         }
 
+        /**
+         *
+         * @return transfer type
+         */
         public String getTransferType() {
             return transferType;
         }
 
+        /**
+         *
+         * @return commerciant
+         */
         public String getCommerciant() {
             return commerciant;
         }
 
+        /**
+         *
+         * @return account
+         */
         public String getAccount() {
             return account;
         }
 
+        /**
+         *
+         * @return card
+         */
         public String getCard() {
             return card;
         }
 
+        /**
+         *
+         * @return card holder
+         */
         public String getCardHolder() {
             return cardHolder;
         }
 
-        public double getAmount_online() {
-            return amount_online;
+        /**
+         *
+         * @return amount (double)
+         */
+        public double getAmountOnline() {
+            return amountOnline;
         }
 
+        /**
+         *
+         * @return currency
+         */
         public String getCurrency() {
             return currency;
         }
 
+        /**
+         *
+         * @return involved accounts
+         */
         public List<String> getInvolvedAccounts() {
             return involvedAccounts;
         }
 
+        /**
+         *
+         * @return error
+         */
         public String getError() {
             return error;
         }
     }
 
+    /**
+     *
+     * @return amount
+     */
     public String getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    /**
+     *
+     * sets @param amount
+     */
+    public void setAmount(final String amount) {
         this.amount = amount;
     }
 
+    /**
+     *
+     * @return description
+     */
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    /**
+     *
+     * sets @param description
+     */
+    public void setDescription(final String description) {
         this.description = description;
     }
 
+    /**
+     *
+     * @return receiver's iban
+     */
     public String getReceiverIban() {
         return receiverIban;
     }
 
-    public void setReceiverIban(String receiverIban) {
+    /**
+     *
+     * sets @param receiverIban
+     */
+    public void setReceiverIban(final String receiverIban) {
         this.receiverIban = receiverIban;
     }
 
+    /**
+     *
+     * @return sender's iban
+     */
     public String getSenderIban() {
         return senderIban;
     }
 
-    public void setSenderIban(String senderIban) {
+    /**
+     *
+     * sets @param senderIban
+     */
+    public void setSenderIban(final String senderIban) {
         this.senderIban = senderIban;
     }
 
+    /**
+     *
+     * @return timestamp
+     */
     public int getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    /**
+     *
+     * sets@param timestamp
+     */
+    public void setTimestamp(final int timestamp) {
         this.timestamp = timestamp;
     }
 
+    /**
+     *
+     * @return transfer type
+     */
     public String getTransferType() {
         return transferType;
     }
 
-    public void setTransferType(String transferType) {
+    /**
+     *
+     * sets @param transferType
+     */
+    public void setTransferType(final String transferType) {
         this.transferType = transferType;
     }
 
+    /**
+     *
+     * @return commerciant
+     */
     public String getCommerciant() {
         return commerciant;
     }
 
-    public void setCommerciant(String commerciant) {
+    /**
+     *
+     * sets @param commerciant
+     */
+    public void setCommerciant(final String commerciant) {
         this.commerciant = commerciant;
     }
 
+    /**
+     *
+     * @return account
+     */
     public String getAccount() {
         return account;
     }
 
-    public void setAccount(String account) {
+    /**
+     *
+     * sets @param account
+     */
+    public void setAccount(final String account) {
         this.account = account;
     }
 
+    /**
+     *
+     * @return card
+     */
     public String getCard() {
         return card;
     }
 
-    public void setCard(String card) {
+    /**
+     *
+     * sets @param card
+     */
+    public void setCard(final String card) {
         this.card = card;
     }
 
+    /**
+     *
+     * @return card holder
+     */
     public String getCardHolder() {
         return cardHolder;
     }
 
-    public void setCardHolder(String cardHolder) {
+    /**
+     *
+     * sets @param cardHolder
+     */
+    public void setCardHolder(final String cardHolder) {
         this.cardHolder = cardHolder;
     }
 
-    public double getAmount_online() {
-        return amount_online;
+    /**
+     *
+     * @return amount(double)
+     */
+    public double getAmountOnline() {
+        return amountOnline;
     }
 
-    public void setAmount_online(double amount_online) {
-        this.amount_online = amount_online;
+    /**
+     *
+     * sets @param amount_online
+     */
+    public void setAmountOnline(final double amountOnline) {
+        this.amountOnline = amountOnline;
     }
 
+    /**
+     *
+     * @return currency
+     */
     public String getCurrency() {
         return currency;
     }
 
-    public void setCurrency(String currency) {
+    /**
+     *
+     * sets @param currency
+     */
+    public void setCurrency(final String currency) {
         this.currency = currency;
     }
 
+    /**
+     *
+     * @return involved accounts
+     */
     public List<String> getInvolvedAccounts() {
         return involvedAccounts;
     }
 
-    public void setInvolvedAccounts(List<String> involvedAccounts) {
+    /**
+     *
+     * sets @param involvedAccounts
+     */
+    public void setInvolvedAccounts(final List<String> involvedAccounts) {
         this.involvedAccounts = involvedAccounts;
     }
 
+    /**
+     *
+     * @return error
+     */
     public String getError() {
         return error;
     }
 
-    public void setError(String error) {
+    /**
+     *
+     * sets @param error
+     */
+    public void setError(final String error) {
         this.error = error;
     }
 }

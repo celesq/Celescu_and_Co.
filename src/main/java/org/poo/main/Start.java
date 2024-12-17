@@ -15,7 +15,14 @@ import static org.poo.utils.Utils.resetRandom;
 
 public final class Start {
 
-    public static void parseDataAndStartGame(final String filePath1, final String filePath2) throws IOException {
+    /**
+     * parses input data and starts the iteration through the commands
+     * @param filePath1 input
+     * @param filePath2 output
+     * @throws IOException if exception
+     */
+    public static void parseDataAndStart(final String filePath1, final String filePath2)
+            throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
         File file = new File(CheckerConstants.TESTS_PATH + filePath1);
@@ -25,7 +32,8 @@ public final class Start {
 
         List<User> users = new ArrayList<>();
         for (int i = 0; i < inputData.getUsers().length; i++) {
-            User newUser = new User(inputData.getUsers()[i].getFirstName(), inputData.getUsers()[i].getLastName(),
+            User newUser = new User(inputData.getUsers()[i].getFirstName(), inputData.getUsers()[i]
+                    .getLastName(),
                     inputData.getUsers()[i].getEmail());
             users.add(newUser);
         }
@@ -33,7 +41,8 @@ public final class Start {
         List<ExchangeRate> exchangeRates = new ArrayList<>();
         for (int i = 0; i < inputData.getExchangeRates().length; i++) {
             ExchangeRate exchangeRate = new ExchangeRate(inputData.getExchangeRates()[i].getFrom(),
-                    inputData.getExchangeRates()[i].getTo(), inputData.getExchangeRates()[i].getRate());
+                    inputData.getExchangeRates()[i].getTo(), inputData.getExchangeRates()[i]
+                    .getRate());
             exchangeRates.add(exchangeRate);
         }
 
@@ -48,7 +57,8 @@ public final class Start {
         }
 
         resetRandom();
-        Output output1 = new Output(users, exchangeRates, comerciants, inputData.getCommands(), output);
+        Output output1 = new Output(users, exchangeRates, comerciants, inputData.getCommands(),
+                output);
         output1.iterateCommands();
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();

@@ -4,7 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.poo.main.ExchangeRate.calculateExchangeRate;
 import static org.poo.main.Utils.putTransactionInObject;
@@ -12,7 +16,7 @@ import static org.poo.main.Utils.roundToTwoDecimalPlates;
 
 
 public class ClassicAccount implements Account {
-    private String Iban;
+    private String iban;
     protected double balance;
     private String currency;
     private String accountType;
@@ -20,137 +24,245 @@ public class ClassicAccount implements Account {
     private ArrayList<Card> cards = new ArrayList<>();
     private ArrayList<Transactions> transactions = new ArrayList<>();
 
-    public ClassicAccount(String Iban, String currency, String accountType) {
-        this.Iban = Iban;
+    public ClassicAccount(final String iban, final String currency, String accountType) {
+        this.iban = iban;
         this.currency = currency;
         this.accountType = accountType;
         balance = 0;
     }
 
+    /**
+     *
+     * @return account type
+     */
     public String getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(String accountType) {
+    /**
+     *
+     * @param accountType type of the account
+     */
+    public void setAccountType(final String accountType) {
         this.accountType = accountType;
     }
 
+    /**
+     *
+     * @return current balance
+     */
     public double getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    /**
+     *
+     * @param balance current balance setter
+     */
+    public void setBalance(final double balance) {
         this.balance = balance;
     }
 
+    /**
+     *
+     * @return credit cards
+     */
     public ArrayList<Card> getCards() {
         return cards;
     }
 
-    public void setCards(ArrayList<Card> cards) {
+    /**
+     *
+     * @param cards setter for the list of cards
+     */
+    public void setCards(final ArrayList<Card> cards) {
         this.cards = cards;
     }
 
+    /**
+     *
+     * @return account currency
+     */
     public String getCurrency() {
         return currency;
     }
 
-    public void setCurrency(String currency) {
+    /**
+     *
+     * @param currency setter
+     */
+    public void setCurrency(final String currency) {
         this.currency = currency;
     }
 
+    /**
+     *
+     * @return iban
+     */
     public String getIban() {
-        return Iban;
+        return iban;
     }
 
-    public void setIban(String iban) {
-        Iban = iban;
+    /**
+     *
+     * @param iban setter
+     */
+    public void setIban(final String iban) {
+        this.iban = iban;
     }
 
+    /**
+     *
+     * @return transactions
+     */
     public ArrayList<Transactions> getTransactions() {
         return transactions;
     }
 
-    public void setTransactions(ArrayList<Transactions> transactions) {
+    /**
+     *
+     * @param transactions setter
+     */
+    public void setTransactions(final ArrayList<Transactions> transactions) {
         this.transactions = transactions;
     }
 
+    /**
+     *
+     * @return minimum balance
+     */
     public double getMinBalance() {
         return minBalance;
     }
 
-    public void setMinBalance(double minBalance) {
+    /**
+     *
+     * @param minBalance setter
+     */
+    public void setMinBalance(final double minBalance) {
         this.minBalance = minBalance;
     }
 
-    public void sendMoney(String command, double amount, Account recieverAccount, int timestamp, String description,
-                          List<ExchangeRate> exchangeRates) {
+    /**
+     *
+     * @param command command from input
+     * @param amount to be sent
+     * @param recieverAccount the account of the reciever
+     * @param timestamp current timestamp
+     * @param description payment description
+     * @param exchangeRates bank's exchange rates
+     */
+    public void sendMoney(final String command, final double amount, final Account recieverAccount,
+                          final int timestamp, final String description,
+                          final List<ExchangeRate> exchangeRates) {
         Transactions newTransaction, recieverTransaction;
-        ExchangeRate exchangeRate = calculateExchangeRate(this, recieverAccount.getCurrency(), exchangeRates);
+        ExchangeRate exchangeRate = calculateExchangeRate(this,
+                recieverAccount.getCurrency(), exchangeRates);
         exchangeRate.setRate(roundToTwoDecimalPlates(exchangeRate.getRate()));
         if (balance < amount) {
-            newTransaction = new Transactions.TransactionsBuilder(timestamp, "Insufficient funds").build();
+            newTransaction = new Transactions.TransactionsBuilder(timestamp,
+                    "Insufficient funds").build();
             transactions.add(newTransaction);
             return;
         }
-        newTransaction = new Transactions.TransactionsBuilder(timestamp, description).setSenderIban(Iban)
-                .setReceiverIban(recieverAccount.getIban()).setAmount(amount + " " + currency).setTransferType("sent").build();
+        newTransaction =
+                new Transactions.TransactionsBuilder(timestamp, description).setSenderIban(iban)
+                .setReceiverIban(recieverAccount.getIban()).setAmount(amount + " " + currency)
+                        .setTransferType("sent").build();
         balance = balance - amount;
         recieverAccount.setBalance(recieverAccount.getBalance() + amount * exchangeRate.getRate());
         transactions.add(newTransaction);
-        recieverTransaction = new Transactions.TransactionsBuilder(timestamp, description).setSenderIban(Iban)
-                .setReceiverIban(recieverAccount.getIban()).setAmount(amount * exchangeRate.getRate() + " " +
-                        recieverAccount.getCurrency()).
+        recieverTransaction =
+                new Transactions.TransactionsBuilder(timestamp, description).setSenderIban(iban)
+                .setReceiverIban(recieverAccount.getIban()).setAmount(amount
+                                * exchangeRate.getRate() + " "
+                                + recieverAccount.getCurrency()).
                 setTransferType("received").build();
         recieverAccount.getTransactions().add(recieverTransaction);
     }
 
 
-    public boolean checkEnoughForSplit(String currency, double amount, int people,
-                                       List<ExchangeRate> exchangeRates) {
-        amount = amount / people;
+    /**
+     *
+     * @param currency      currency for the payment
+     * @param amount        for the payment
+     * @param people        which contribute at the split
+     * @param exchangeRates bank's exchange rates
+     * @return
+     */
+    public boolean checkEnoughForSplit(final String currency, final double amount, final int people,
+                                       final List<ExchangeRate> exchangeRates) {
+        double amountAfterDivide = amount / people;
         ExchangeRate exchangeRate = calculateExchangeRate(this, currency, exchangeRates);
-        if (balance < amount * 1 / exchangeRate.getRate()) {
-            return false;
-        }
-        return true;
+        return !(balance < amountAfterDivide * 1 / exchangeRate.getRate());
     }
 
-    public void splitPayment(String currency, double amount, int people,
-                             List<ExchangeRate> exchangeRates, int timestamp, List<String> involvedAccounts) {
-        amount = amount / people;
+    /**
+     *
+     * @param currency         for the payment
+     * @param amount           for the payment
+     * @param people           which contribute at the split
+     * @param exchangeRates    bank's exchange rates
+     * @param timestamp        current timestamp
+     * @param involvedAccounts which contribute at the split
+     */
+    public void splitPayment(final String currency, final double amount, final int people,
+                             final List<ExchangeRate> exchangeRates, final int timestamp,
+                             final List<String> involvedAccounts) {
+        double amountAfterDivide = amount / people;
         ExchangeRate exchangeRate = calculateExchangeRate(this, currency, exchangeRates);
         exchangeRate.setRate((exchangeRate.getRate()));
-        balance = balance - amount * 1 / exchangeRate.getRate();
+        balance = balance - amountAfterDivide * 1 / exchangeRate.getRate();
         Transactions newTransaction;
-        if (amount * people % 1 == 0) {
-            newTransaction = new Transactions.TransactionsBuilder(timestamp, "Split payment of " +
-                    (amount * people) + "0 " + currency).
-                    setAmount_online(amount).setCurrency(currency).setInvolvedAccounts(involvedAccounts) .build();
+        if (amount % 1 == 0) {
+            newTransaction = new Transactions.TransactionsBuilder(timestamp,
+                    "Split payment of "
+                            + (amount) + "0 " + currency).setAmountOnline(amountAfterDivide)
+                    .setCurrency(currency).setInvolvedAccounts(involvedAccounts).build();
         } else {
-            newTransaction = new Transactions.TransactionsBuilder(timestamp, "Split payment of " +
-                    (amount * people) + " " + currency).setAmount_online(amount).
+            newTransaction = new Transactions.TransactionsBuilder(timestamp,
+                    "Split payment of "
+                            + (amount) + " " + currency).setAmountOnline(amountAfterDivide).
                     setCurrency(currency).setInvolvedAccounts(involvedAccounts).build();
         }
         transactions.add(newTransaction);
     }
 
-    public boolean changeInterestRate(double interestRate, int timestamp) {
+    /**
+     *
+     * @param interestRate changed interest rate
+     * @param timestamp    current timestamp
+     * @return
+     */
+    public boolean changeInterestRate(final double interestRate, final int timestamp) {
         return false;
     }
 
+    /**
+     *
+     * @return false
+     */
     public boolean addInterest() {
         return false;
     }
 
-    public ObjectNode makeReport(int startTimeStamp, int endTimeStamp, int timestamp) {
+    /**
+     *
+     * @param startTimeStamp start point
+     * @param endTimeStamp   end point
+     * @param timestamp      current timestamp
+     * @return
+     */
+    public ObjectNode makeReport(final int startTimeStamp, final int endTimeStamp,
+                                 final int timestamp) {
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put("IBAN", Iban);
+        objectNode.put("IBAN", iban);
         objectNode.put("balance", balance);
         objectNode.put("currency", currency);
         ArrayNode arrayNode = new ObjectMapper().createArrayNode();
         for (Transactions transactions : transactions) {
-            if (transactions.getTimestamp() >= startTimeStamp && transactions.getTimestamp() <= endTimeStamp) {
+            if (transactions.getTimestamp() >= startTimeStamp && transactions.getTimestamp()
+                    <= endTimeStamp) {
                 ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
                 putTransactionInObject(objectNode1, transactions);
                 arrayNode.add(objectNode1);
@@ -160,33 +272,44 @@ public class ClassicAccount implements Account {
         return objectNode;
     }
 
-    public ObjectNode makeSpendingsReport(int startTimeStamp, int endTimeStamp, int timestamp) {
+    /**
+     *
+     * @param startTimeStamp start point
+     * @param endTimeStamp   end point
+     * @param timestamp      current timestamp
+     * @return
+     */
+    public ObjectNode makeSpendingsReport(final int startTimeStamp, final int endTimeStamp,
+                                          final int timestamp) {
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
-        objectNode.put("IBAN", Iban);
+        objectNode.put("IBAN", iban);
         objectNode.put("balance", balance);
         objectNode.put("currency", currency);
         ArrayNode arrayNode = new ObjectMapper().createArrayNode();
         Map<String, Double> commerciants = new HashMap<>();
         List<String> commerciantNames = new ArrayList<>();
         for (Transactions transactions : transactions) {
-            if (transactions.getTimestamp() >= startTimeStamp && transactions.getTimestamp() <= endTimeStamp
+            if (transactions.getTimestamp() >= startTimeStamp && transactions.getTimestamp()
+                    <= endTimeStamp
                     && transactions.getDescription().equals("Card payment")) {
                 ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
                 putTransactionInObject(objectNode1, transactions);
                 arrayNode.add(objectNode1);
                 if (commerciants.containsKey(transactions.getCurrency())) {
                     double amountSpent = commerciants.get(transactions.getCommerciant());
-                    commerciants.replace(transactions.getCommerciant(), amountSpent, amountSpent
-                            + transactions.getAmount_online());
+                    commerciants.replace(transactions.getCommerciant(), amountSpent,
+                            amountSpent
+                            + transactions.getAmountOnline());
                 } else {
-                    commerciants.putIfAbsent(transactions.getCommerciant(), transactions.getAmount_online());
+                    commerciants.putIfAbsent(transactions.getCommerciant(),
+                            transactions.getAmountOnline());
                 }
                 commerciantNames.add(transactions.getCommerciant());
             }
         }
         ArrayNode arrayNode1 = new ObjectMapper().createArrayNode();
         commerciantNames.sort(new Comparator<String>() {
-            public int compare(String o1, String o2) {
+            public int compare(final String o1, final String o2) {
                 return o1.compareTo(o2);
             }
         });

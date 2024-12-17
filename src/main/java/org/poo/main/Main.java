@@ -65,7 +65,7 @@ public final class  Main {
      */
     public static void action(final String filePath1,
                               final String filePath2) throws IOException {
-        Start.parseDataAndStartGame(filePath1, filePath2);
+        Start.parseDataAndStart(filePath1, filePath2);
     }
 
     /**

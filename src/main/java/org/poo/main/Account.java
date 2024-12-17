@@ -7,50 +7,149 @@ import java.util.List;
 
 public interface Account {
 
-    public String getAccountType();
+    /**
+     * @return the type of the account
+     */
+    String getAccountType();
 
-    public void setAccountType(String accountType);
+    /**
+     * @param accountType type of the account
+     */
+    void setAccountType(String accountType);
 
-    public double getBalance();
+    /**
+     *
+     * @return current balance
+     */
+    double getBalance();
 
-    public void setBalance(double balance);
+    /**
+     *
+     * @param balance current balance setter
+     */
+    void setBalance(double balance);
 
-    public ArrayList<Card> getCards();
+    /**
+     *
+     * @return the list of credit cards
+     */
+    ArrayList<Card> getCards();
 
-    public void setCards(ArrayList<Card> cards);
+    /**
+     *
+     * @param cards setter for the list of cards
+     */
+    void setCards(ArrayList<Card> cards);
 
-    public String getCurrency();
+    /**
+     *
+     * @return account currency
+     */
+    String getCurrency();
 
-    public void setCurrency(String currency);
+    /**
+     *
+     * @param currency setter
+     */
+    void setCurrency(String currency);
 
-    public String getIban();
+    /**
+     *
+     * @return account IBAN
+     */
+    String getIban();
 
-    public void setIban(String iban);
+    /**
+     *
+     * @param iban setter
+     */
+    void setIban(String iban);
 
-    public ArrayList<Transactions> getTransactions();
+    /**
+     *
+     * @return the list of transactions
+     */
+    ArrayList<Transactions> getTransactions();
 
-    public void setTransactions(ArrayList<Transactions> transactions);
+    /**
+     * ]
+     * @param transactions setter
+     */
+    void setTransactions(ArrayList<Transactions> transactions);
 
-    public double getMinBalance();
+    /**
+     *
+     * @return minimum balance
+     */
+    double getMinBalance();
 
-    public void setMinBalance(double minBalance);
+    /**
+     *
+     * @param minBalance setter
+     */
+    void setMinBalance(double minBalance);
 
-    public void sendMoney(String command, double amount, Account recieverAccount, int timestamp, String description,
-                          List<ExchangeRate> exchangeRates);
+    /**
+     *
+     * @param command command from input
+     * @param amount to be sent
+     * @param recieverAccount the account of the reciever
+     * @param timestamp current timestamp
+     * @param description payment description
+     * @param exchangeRates bank's exchange rates
+     */
+    void sendMoney(String command, double amount, Account recieverAccount, int timestamp,
+                   String description, List<ExchangeRate> exchangeRates);
 
-    public boolean checkEnoughForSplit(String currency, double amount, int people,
-                                       List<ExchangeRate> exchangeRates);
+    /**
+     * @param currency      currency for the payment
+     * @param amount        for the payment
+     * @param people        which contribute at the split
+     * @param exchangeRates bank's exchange rates
+     * @return true if the accounts have enough money to split the payment
+     */
+    boolean checkEnoughForSplit(String currency, double amount, int people,
+                                List<ExchangeRate> exchangeRates);
 
-    public void splitPayment(String currency, double amount, int people,
-                             List<ExchangeRate> exchangeRates, int timestamp, List<String> involvedAccounts);
+    /**
+     * @param currency         for the payment
+     * @param amount           for the payment
+     * @param people           which contribute at the split
+     * @param exchangeRates    bank's exchange rates
+     * @param timestamp        current timestamp
+     * @param involvedAccounts which contribute at the split
+     */
+    void splitPayment(String currency, double amount, int people, List<ExchangeRate> exchangeRates,
+                      int timestamp, List<String> involvedAccounts);
 
 
-    public boolean changeInterestRate(double interestRate, int timestamp);
+    /**
+     * @param interestRate changed interest rate
+     * @param timestamp    current timestamp
+     * @return true if it is a savings account, false otherwise
+     */
+    boolean changeInterestRate(double interestRate, int timestamp);
 
-    public boolean addInterest();
+    /**
+     *
+     * @return true if it is a savings account, false otherwise
+     */
+    boolean addInterest();
 
-    public ObjectNode makeReport(int startTimeStamp, int endTimeStamp, int timestamp);
+    /**
+     * @param startTimeStamp start point
+     * @param endTimeStamp   end point
+     * @param timestamp      current timestamp
+     * @return the object node
+     */
+    ObjectNode makeReport(int startTimeStamp, int endTimeStamp, int timestamp);
 
-    public ObjectNode makeSpendingsReport(int startTimeStamp, int endTimeStamp, int timestamp);
+    /**
+     * @param startTimeStamp start point
+     * @param endTimeStamp   end point
+     * @param timestamp      current timestamp
+     * @return the object node
+     */
+    ObjectNode makeSpendingsReport(int startTimeStamp, int endTimeStamp, int timestamp);
 
 }

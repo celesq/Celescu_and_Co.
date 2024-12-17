@@ -20,8 +20,9 @@ public class Output {
     private CommandInput[] commandInput;
     private ArrayNode output;
 
-    public Output(List<User> users, List<ExchangeRate> exchangeRates, List<Comerciant> comerciants,
-                  CommandInput[] commandInput, ArrayNode output) {
+    public Output(final List<User> users, final List<ExchangeRate> exchangeRates,
+                  final List<Comerciant> comerciants, final CommandInput[] commandInput,
+                  final ArrayNode output) {
         this.users = users;
         this.exchangeRates = exchangeRates;
         this.comerciants = comerciants;
@@ -29,97 +30,152 @@ public class Output {
         this.output = output;
     }
 
+    /**
+     * @return commerciants
+     */
     public List<Comerciant> getComerciants() {
         return comerciants;
     }
 
-    public void setComerciants(List<Comerciant> comerciants) {
+    /**
+     * @param comerciants setter
+     */
+    public void setComerciants(final List<Comerciant> comerciants) {
         this.comerciants = comerciants;
     }
 
+    /**
+     * @return bank's exchange rates
+     */
     public List<ExchangeRate> getExchangeRates() {
         return exchangeRates;
     }
 
-    public void setExchangeRates(List<ExchangeRate> exchangeRates) {
+    /**
+     * @param exchangeRates setter
+     */
+    public void setExchangeRates(final List<ExchangeRate> exchangeRates) {
         this.exchangeRates = exchangeRates;
     }
 
+    /**
+     * @return users
+     */
     public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    /**
+     * @param users setter
+     */
+    public void setUsers(final List<User> users) {
         this.users = users;
     }
 
+    /**
+     * @return command input
+     */
     public CommandInput[] getCommandInput() {
         return commandInput;
     }
 
-    public void setCommandInput(CommandInput[] commandInput) {
+    /**
+     * @param commandInput setter
+     */
+    public void setCommandInput(final CommandInput[] commandInput) {
         this.commandInput = commandInput;
     }
 
+    /**
+     * @return output
+     */
     public ArrayNode getOutput() {
         return output;
     }
 
-    public void setOutput(ArrayNode output) {
+    /**
+     * @param output setter
+     */
+    public void setOutput(final ArrayNode output) {
         this.output = output;
     }
 
+    /**
+     * iterate each command and call the adequate function
+     */
     public void iterateCommands() {
         for (int i = 0; i < commandInput.length; i++) {
             switch (commandInput[i].getCommand()) {
-                case "printUsers" -> printUsers(commandInput[i].getCommand(), commandInput[i].getTimestamp());
-                case "addAccount" -> addAccount(commandInput[i].getEmail(), commandInput[i].getCurrency(),
-                        commandInput[i].getAccountType(), commandInput[i].getTimestamp(),
-                        commandInput[i].getInterestRate());
-                case "createCard" -> createCard(commandInput[i].getAccount(), commandInput[i].getEmail(),
+                case "printUsers" ->
+                        printUsers(commandInput[i].getCommand(), commandInput[i].getTimestamp());
+                case "addAccount" ->
+                        addAccount(commandInput[i].getEmail(), commandInput[i].getCurrency(),
+                                commandInput[i].getAccountType(), commandInput[i].getTimestamp(),
+                                commandInput[i].getInterestRate());
+                case "createCard" ->
+                        createCard(commandInput[i].getAccount(), commandInput[i].getEmail(),
+                                commandInput[i].getTimestamp());
+                case "addFunds" ->
+                        addFunds(commandInput[i].getAccount(), commandInput[i].getAmount(),
+                                commandInput[i].getTimestamp());
+                case "deleteAccount" ->
+                        deleteAccount(commandInput[i].getCommand(), commandInput[i].getEmail(),
+                                commandInput[i].getAccount(),
                         commandInput[i].getTimestamp());
-                case "addFunds" -> addFunds(commandInput[i].getAccount(), commandInput[i].getAmount(),
+                case "deleteCard" ->
+                        deleteCard(commandInput[i].getCardNumber(), commandInput[i].getTimestamp());
+                case "createOneTimeCard" ->
+                        createOneTimeCard(commandInput[i].getAccount(), commandInput[i].getEmail(),
                         commandInput[i].getTimestamp());
-                case "deleteAccount" -> deleteAccount(commandInput[i].getCommand(), commandInput[i].getEmail(),
-                        commandInput[i].getAccount(),
+                case "setMinBalance" ->
+                        setMinBalance(commandInput[i].getCommand(), commandInput[i].getMinBalance(),
+                        commandInput[i].getAccount());
+                case "checkCardStatus" -> checkCardStatus(commandInput[i].getCommand(),
+                        commandInput[i].getCardNumber(),
                         commandInput[i].getTimestamp());
-                case "deleteCard" -> deleteCard(commandInput[i].getCardNumber(), commandInput[i].getTimestamp());
-                case "createOneTimeCard" -> createOneTimeCard(commandInput[i].getAccount(), commandInput[i].getEmail(),
-                        commandInput[i].getTimestamp());
-                case "setMinBalance" -> setMinBalance(commandInput[i].getCommand(), commandInput[i].getMinBalance(),
-                        commandInput[i].getAccount(), commandInput[i].getTimestamp());
-                case "checkCardStatus" -> checkCardStatus(commandInput[i].getCommand(), commandInput[i].getCardNumber(),
-                        commandInput[i].getTimestamp());
-                case "payOnline" -> payOnline(commandInput[i].getCommand(), commandInput[i].getCardNumber(),
+                case "payOnline" ->
+                        payOnline(commandInput[i].getCommand(), commandInput[i].getCardNumber(),
                         commandInput[i].getAmount(),
                         commandInput[i].getCurrency(), commandInput[i].getTimestamp(),
-                        commandInput[i].getCommerciant()
-                        , commandInput[i].getEmail());
-                case "sendMoney" -> sendMoney(commandInput[i].getCommand(), commandInput[i].getAccount(),
+                        commandInput[i].getCommerciant(), commandInput[i].getEmail());
+                case "sendMoney" ->
+                        sendMoney(commandInput[i].getCommand(), commandInput[i].getAccount(),
                         commandInput[i].getAmount(),
                         commandInput[i].getReceiver(), commandInput[i].getTimestamp(),
                         commandInput[i].getDescription(),
                         commandInput[i].getEmail());
-                case "printTransactions" -> printTransactions(commandInput[i].getCommand(), commandInput[i].getEmail(),
-                        commandInput[i].getTimestamp());
-                case "setAlias" ->
-                        setAlias(commandInput[i].getEmail(), commandInput[i].getAlias(), commandInput[i].getAccount());
-                case "splitPayment" -> splitPayment(commandInput[i].getAccounts(), commandInput[i].getCurrency(),
-                        commandInput[i].getTimestamp(), commandInput[i].getAmount());
-                case "changeInterestRate" ->
-                        changeInterestRate(commandInput[i].getAccount(), commandInput[i].getInterestRate(),
+                case "printTransactions" ->
+                        printTransactions(commandInput[i].getCommand(), commandInput[i].getEmail(),
                                 commandInput[i].getTimestamp());
-                case "addInterest" -> addInterest(commandInput[i].getAccount(), commandInput[i].getTimestamp());
-                case "report" -> report(commandInput[i].getStartTimestamp(), commandInput[i].getEndTimestamp(),
+                case "setAlias" -> setAlias(commandInput[i].getEmail(), commandInput[i].getAlias(),
+                        commandInput[i].getAccount());
+                case "splitPayment" ->
+                        splitPayment(commandInput[i].getAccounts(), commandInput[i].getCurrency(),
+                        commandInput[i].getTimestamp(), commandInput[i].getAmount());
+                case "changeInterestRate" -> changeInterestRate(commandInput[i].getAccount(),
+                        commandInput[i].getInterestRate(),
+                                commandInput[i].getTimestamp());
+                case "addInterest" ->
+                        addInterest(commandInput[i].getAccount(), commandInput[i].getTimestamp());
+                case "report" -> report(commandInput[i].getStartTimestamp(),
+                        commandInput[i].getEndTimestamp(),
                         commandInput[i].getAccount(), commandInput[i].getTimestamp());
-                case "spendingsReport" ->
-                        spendingsReport(commandInput[i].getStartTimestamp(), commandInput[i].getEndTimestamp(),
+                case "spendingsReport" -> spendingsReport(commandInput[i].getStartTimestamp(),
+                        commandInput[i].getEndTimestamp(),
                                 commandInput[i].getAccount(), commandInput[i].getTimestamp());
+                default -> {
+                    break;
+                }
             }
         }
     }
 
-    public void printUsers(String command, int timestamp) {
+    /**
+     *
+     * @param command input command
+     * @param timestamp current timestamp
+     */
+    public void printUsers(final String command, final int timestamp) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put("command", command);
@@ -154,12 +210,21 @@ public class Output {
         output.add(objectNode);
     }
 
-    public void addAccount(String email, String currency, String accountType, int timestamp, double interestRate) {
+    /**
+     *
+     * @param email user email
+     * @param currency account currency
+     * @param accountType type of account
+     * @param timestamp current timestamp
+     * @param interestRate account interest rate
+     */
+    public void addAccount(final String email, final String currency, final String accountType,
+                           final int timestamp, final double interestRate) {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
                 Account account;
-                String Iban = generateIBAN();
-                account = AccountFactory.createAccount(accountType, Iban, currency, interestRate);
+                String iban = generateIBAN();
+                account = AccountFactory.createAccount(accountType, iban, currency, interestRate);
                 Transactions transaction = new Transactions.
                         TransactionsBuilder(timestamp, "New account created").build();
                 account.getTransactions().add(transaction);
@@ -168,7 +233,15 @@ public class Output {
         }
     }
 
-    public void deleteAccount(String command, String email, String Iban, int timestamp) {
+    /**
+     *
+     * @param command current command
+     * @param email user email
+     * @param iban account IBAN
+     * @param timestamp current timestamp
+     */
+    public void deleteAccount(final String command, final String email, final String iban,
+                              final int timestamp) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put("command", command);
@@ -176,7 +249,7 @@ public class Output {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
                 for (Account account : user.getAccounts()) {
-                    if (account.getIban().equals(Iban)) {
+                    if (account.getIban().equals(iban)) {
                         ObjectNode objectNode1 = mapper.createObjectNode();
                         if (account.getBalance() == 0) {
                             account.getCards().removeAll(account.getCards());
@@ -184,10 +257,11 @@ public class Output {
                             removedAccount = account;
                             objectNode1.put("success", "Account deleted");
                         } else {
-                            objectNode1.put("error", "Account couldn't be deleted - " +
-                                    "see org.poo.transactions for details");
-                            Transactions newTransaction = new Transactions.TransactionsBuilder(timestamp,
-                                    "Account couldn't be deleted - there are funds remaining").build();
+                            objectNode1.put("error", "Account couldn't be deleted - "
+                                    + "see org.poo.transactions for details");
+                            Transactions newTransaction = new Transactions.TransactionsBuilder(
+                                    timestamp, "Account couldn't be deleted - "
+                                            + "there are funds remaining").build();
                             account.getTransactions().add(newTransaction);
                         }
                         objectNode1.put("timestamp", timestamp);
@@ -203,10 +277,17 @@ public class Output {
         output.add(objectNode);
     }
 
-    public void changeInterestRate(String Iban, double interestRate, int timestamp) {
+    /**
+     *
+     * @param iban account IBAN
+     * @param interestRate changed interest rate
+     * @param timestamp current timestamp
+     */
+    public void changeInterestRate(final String iban, final double interestRate,
+                                   final int timestamp) {
         for (User user : users) {
             for (Account account : user.getAccounts()) {
-                if (account.getIban().equals(Iban)) {
+                if (account.getIban().equals(iban)) {
                     boolean ok = account.changeInterestRate(interestRate, timestamp);
                     if (!ok) {
                         ObjectNode objectNode = new ObjectMapper().createObjectNode();
@@ -223,10 +304,15 @@ public class Output {
         }
     }
 
-    public void addInterest(String Iban, int timestamp) {
+    /**
+     *
+     * @param iban account IBAN
+     * @param timestamp current timestamp
+     */
+    public void addInterest(final String iban, final int timestamp) {
         for (User user : users) {
             for (Account account : user.getAccounts()) {
-                if (account.getIban().equals(Iban)) {
+                if (account.getIban().equals(iban)) {
                     boolean ok = account.addInterest();
                     if (!ok) {
                         ObjectNode objectNode = new ObjectMapper().createObjectNode();
@@ -243,44 +329,70 @@ public class Output {
         }
     }
 
-    public void createCard(String Iban, String email, int timestamp) {
+    /**
+     *
+     * @param iban account IBAN
+     * @param email user email
+     * @param timestamp current timestamp
+     */
+    public void createCard(final String iban, final String email, final int timestamp) {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
                 for (Account account : user.getAccounts()) {
-                    if (account.getIban().equals(Iban)) {
+                    if (account.getIban().equals(iban)) {
                         Card card = new ClassicCard(generateCardNumber(), "active");
                         account.getCards().add(card);
-                        putTransactionForCard("New card created", account, card.getNumber(), user.getEmail(),
-                                timestamp);
+                        putTransactionForCard("New card created", account,
+                                card.getNumber(), user.getEmail(), timestamp);
                     }
                 }
             }
         }
     }
 
-    public void createOneTimeCard(String Iban, String email, int timestamp) {
+    /**
+     *
+     * @param iban account IBAN
+     * @param email user email
+     * @param timestamp current timestamp
+     */
+    public void createOneTimeCard(final String iban, final String email, final int timestamp) {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
                 for (Account account : user.getAccounts()) {
-                    if (account.getIban().equals(Iban)) {
+                    if (account.getIban().equals(iban)) {
                         Card card = new OneTimeCard(generateCardNumber(), "active");
                         account.getCards().add(card);
-                        putTransactionForCard("New card created", account, card.getNumber(), user.getEmail(),
-                                timestamp);
+                        putTransactionForCard("New card created", account,
+                                card.getNumber(), user.getEmail(), timestamp);
                     }
                 }
             }
         }
     }
 
-    public void putTransactionForCard(String description, Account account, String card, String cardHolder,
-                                      int timestamp) {
+    /**
+     *
+     * @param description transaction description
+     * @param account account IBAN
+     * @param card card used
+     * @param cardHolder card owner
+     * @param timestamp current timestamp
+     */
+    public void putTransactionForCard(final String description, final Account account,
+                                      final String card, final String cardHolder,
+                                      final int timestamp) {
         Transactions transaction = new Transactions.TransactionsBuilder(timestamp, description)
                 .setAccount(account.getIban()).setCard(card).setCardHolder(cardHolder).build();
         account.getTransactions().add(transaction);
     }
 
-    public void deleteCard(String cardNumber, int timestamp) {
+    /**
+     *
+     * @param cardNumber number of the card deleted
+     * @param timestamp current timestamp
+     */
+    public void deleteCard(final String cardNumber, final int timestamp) {
         Card removedCard = null;
         for (User user : users) {
             for (Account account : user.getAccounts()) {
@@ -291,28 +403,40 @@ public class Output {
                 }
                 if (removedCard != null) {
                     account.getCards().remove(removedCard);
-                    putTransactionForCard("The card has been destroyed", account, removedCard.getNumber(),
-                            user.getEmail(), timestamp);
+                    putTransactionForCard("The card has been destroyed",
+                            account, removedCard.getNumber(), user.getEmail(), timestamp);
                 }
             }
         }
     }
 
-    public void addFunds(String Iban, double amount, int timestamp) {
+    /**
+     *
+     * @param iban account in which the founds will be added
+     * @param amount amount of money
+     * @param timestamp current timestamp
+     */
+    public void addFunds(final String iban, final double amount, final int timestamp) {
         for (User user : users) {
             for (Account account : user.getAccounts()) {
-                if (account.getIban().equals(Iban)) {
+                if (account.getIban().equals(iban)) {
                     account.setBalance(account.getBalance() + amount);
                 }
             }
         }
     }
 
-    public void setMinBalance(String command, double minBalance, String Iban, int timestamp) {
+    /**
+     *
+     * @param command current command
+     * @param minBalance minimum balance
+     * @param iban account IBAN
+     */
+    public void setMinBalance(final String command, final double minBalance, final String iban) {
         int ok = 0;
         for (User user : users) {
             for (Account account : user.getAccounts()) {
-                if (account.getIban().equals(Iban)) {
+                if (account.getIban().equals(iban)) {
                     account.setMinBalance(minBalance);
                     ok = 1;
                 }
@@ -326,7 +450,14 @@ public class Output {
         }
     }
 
-    public void checkCardStatus(String command, String cardNumber, int timestamp) {
+    /**
+     *
+     * @param command current command
+     * @param cardNumber checked card number
+     * @param timestamp current timestamp
+     */
+    public void checkCardStatus(final String command, final String cardNumber,
+                                final int timestamp) {
         Card checkedCard = null;
         Account checkedAccount = null;
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
@@ -353,8 +484,19 @@ public class Output {
         }
     }
 
-    public void payOnline(String command, String cardNumber, double amount, String currency, int timestamp,
-                          String commerciant, String email) {
+    /**
+     *
+     * @param command current command
+     * @param cardNumber card which is used to pay
+     * @param amount amount paid
+     * @param currency currency used
+     * @param timestamp current timestamp
+     * @param commerciant current commerciant
+     * @param email user email
+     */
+    public void payOnline(final String command, final String cardNumber, final double amount,
+                          final String currency, final int timestamp, final String commerciant,
+                          final String email) {
         int correctUser = 0;
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("command", command);
@@ -364,13 +506,13 @@ public class Output {
                     if (card.getNumber().equals(cardNumber)) {
                         correctUser = 1;
                         if (card.getStatus().equals("frozen")) {
-                            Transactions transaction = new Transactions.TransactionsBuilder(timestamp
-                                    , "The card is frozen").build();
+                            Transactions transaction = new Transactions.TransactionsBuilder(
+                                    timestamp, "The card is frozen").build();
                             account.getTransactions().add(transaction);
                             return;
                         }
-                        card.pay(account, card, amount, currency, "Card payment", commerciant, email,
-                                timestamp, exchangeRates);
+                        card.pay(account, card, amount, currency, "Card payment",
+                                commerciant, email, timestamp, exchangeRates);
                     }
                 }
             }
@@ -387,12 +529,23 @@ public class Output {
         }
     }
 
-    public void sendMoney(String command, String Iban, double amount, String reciever, int timestamp,
-                          String description, String email) {
+    /**
+     *
+     * @param command current command
+     * @param iban account IBAN
+     * @param amount amount sent
+     * @param reciever receiver IBAN
+     * @param timestamp current timestamp
+     * @param description description of the payment
+     * @param email user email
+     */
+    public void sendMoney(final String command, final String iban, final double amount,
+                          final String reciever, final int timestamp, final String description,
+                          final String email) {
         Account sender = null, recieverAccount = null;
         for (User user : users) {
             for (Account account : user.getAccounts()) {
-                if (account.getIban().equals(Iban)) {
+                if (account.getIban().equals(iban)) {
                     sender = account;
                 }
                 if (account.getIban().equals(reciever)) {
@@ -404,10 +557,10 @@ public class Output {
             for (User user : users) {
                 if (user.getEmail().equals(email)) {
                     if (user.getAliases().containsKey(reciever)) {
-                        reciever = user.getAliases().get(reciever);
+                        String recieverAlias = user.getAliases().get(reciever);
                         for (User user1 : users) {
                             for (Account account : user1.getAccounts()) {
-                                if (account.getIban().equals(reciever)) {
+                                if (account.getIban().equals(recieverAlias)) {
                                     recieverAccount = account;
                                 }
                             }
@@ -417,11 +570,18 @@ public class Output {
             }
         }
         if (sender != null && recieverAccount != null) {
-            sender.sendMoney(command, amount, recieverAccount, timestamp, description, exchangeRates);
+            sender.sendMoney(command, amount, recieverAccount, timestamp, description,
+                    exchangeRates);
         }
     }
 
-    public void printTransactions(String command, String email, int timestamp) {
+    /**
+     *
+     * @param command current command
+     * @param email user email
+     * @param timestamp current timestamp
+     */
+    public void printTransactions(final String command, final String email, final int timestamp) {
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("command", command);
         for (User user : users) {
@@ -433,7 +593,7 @@ public class Output {
                 }
                 allTransactions.sort(new Comparator<Transactions>() {
                     @Override
-                    public int compare(Transactions o1, Transactions o2) {
+                    public int compare(final Transactions o1, final Transactions o2) {
                         return o1.getTimestamp() - o2.getTimestamp();
                     }
                 });
@@ -449,15 +609,29 @@ public class Output {
         output.add(objectNode);
     }
 
-    public void setAlias(String email, String alias, String Iban) {
+    /**
+     *
+     * @param email user email
+     * @param alias set
+     * @param iban account IBAN
+     */
+    public void setAlias(final String email, final String alias, final String iban) {
         for (User user : users) {
             if (user.getEmail().equals(email)) {
-                user.getAliases().putIfAbsent(alias, Iban);
+                user.getAliases().putIfAbsent(alias, iban);
             }
         }
     }
 
-    public void splitPayment(List<String> accountsInput, String currency, int timestamp, double amount) {
+    /**
+     *
+     * @param accountsInput accounts which split the payment
+     * @param currency used
+     * @param timestamp current timestamp
+     * @param amount paid
+     */
+    public void splitPayment(final List<String> accountsInput, final String currency,
+                             final int timestamp, final double amount) {
         List<Account> accountsForSplit = new ArrayList<>();
         for (String accountInput : accountsInput) {
             for (User user : users) {
@@ -470,49 +644,75 @@ public class Output {
         }
         Account accountWhichCouldNotPay = null;
         for (Account account : accountsForSplit) {
-            if (!account.checkEnoughForSplit(currency, amount, accountsForSplit.size(), exchangeRates)) {
+            if (!account.checkEnoughForSplit(currency, amount, accountsForSplit.size(),
+                    exchangeRates)) {
                 accountWhichCouldNotPay = account;
             }
         }
         if (accountWhichCouldNotPay != null) {
-            errorSplittingPayment(accountsForSplit, accountWhichCouldNotPay, amount, currency, accountsForSplit.size(),
-                    timestamp,
-                    accountsInput);
+            errorSplittingPayment(accountsForSplit, accountWhichCouldNotPay, amount, currency,
+                    accountsForSplit.size(), timestamp, accountsInput);
             return;
         }
         for (Account account : accountsForSplit) {
-            account.splitPayment(currency, amount, accountsInput.size(), exchangeRates, timestamp, accountsInput);
+            account.splitPayment(currency, amount, accountsInput.size(), exchangeRates, timestamp,
+                    accountsInput);
         }
     }
 
-    public void errorSplittingPayment(List<Account> accountsForSplit, Account accountWhichCouldNotPay, double amount,
-                                     String currency, int people, int timestamp, List <String> accountsInput) {
+    /**
+     *
+     * @param accountsForSplit which split
+     * @param accountWhichCouldNotPay who could not pay
+     * @param amount that needed to be paid
+     * @param currency used
+     * @param people who contributed
+     * @param timestamp current timestamp
+     * @param accountsInput accounts who contributed
+     */
+    public void errorSplittingPayment(final List<Account> accountsForSplit,
+                                      final Account accountWhichCouldNotPay, final  double amount,
+                                      final String currency, final int people, final int timestamp,
+                                      final List<String> accountsInput) {
         for (Account account : accountsForSplit) {
             Transactions newTransaction;
             if (amount % 1 == 0) {
-                newTransaction = new Transactions.TransactionsBuilder(timestamp, "Split payment of "
-                        + amount + "0 " + currency).setAmount_online(amount / people).setCurrency(currency).
-                        setInvolvedAccounts(accountsInput).setError("Account " + accountWhichCouldNotPay.getIban() +
-                                " has insufficient funds for a split payment.").build();
+                newTransaction = new Transactions.TransactionsBuilder(timestamp,
+                        "Split payment of " + amount + "0 " + currency)
+                        .setAmountOnline(amount / people).setCurrency(currency).
+                                setInvolvedAccounts(accountsInput)
+                        .setError("Account " + accountWhichCouldNotPay.getIban()
+                                + " has insufficient funds for a split payment.").build();
             } else {
-                newTransaction = new Transactions.TransactionsBuilder(timestamp, "Split payment of "
-                        + amount + " " + currency).setAmount_online(amount / people).setCurrency(currency).
-                        setInvolvedAccounts(accountsInput).setError("Account " + accountWhichCouldNotPay.getIban() +
-                                " has insufficient funds for a split payment.").build();
+                newTransaction = new Transactions.TransactionsBuilder(timestamp,
+                        "Split payment of " + amount + " " + currency)
+                        .setAmountOnline(amount / people).setCurrency(currency).
+                                setInvolvedAccounts(accountsInput)
+                        .setError("Account " + accountWhichCouldNotPay.getIban()
+                                + " has insufficient funds for a split payment.").build();
             }
             account.getTransactions().add(newTransaction);
         }
     }
 
-    public void report(int startTimeStamp, int endTimeStamp, String Iban, int timestamp) {
+    /**
+     *
+     * @param startTimeStamp start
+     * @param endTimeStamp end
+     * @param iban account IBAN
+     * @param timestamp current timestamp
+     */
+    public void report(final int startTimeStamp, final int endTimeStamp, final String iban,
+                       final int timestamp) {
         int found = 0;
         ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
         objectNode1.put("command", "report");
         for (User user : users) {
             for (Account account : user.getAccounts()) {
-                if (account.getIban().equals(Iban)) {
+                if (account.getIban().equals(iban)) {
                     found = 1;
-                    ObjectNode objectNode = account.makeReport(startTimeStamp, endTimeStamp, timestamp);
+                    ObjectNode objectNode = account.makeReport(startTimeStamp, endTimeStamp,
+                            timestamp);
                     objectNode1.put("output", objectNode);
                 }
             }
@@ -527,15 +727,24 @@ public class Output {
         output.add(objectNode1);
     }
 
-    public void spendingsReport(int startTimeStamp, int endTimeStamp, String Iban, int timestamp) {
+    /**
+     *
+     * @param startTimeStamp start
+     * @param endTimeStamp end
+     * @param iban account IBAN
+     * @param timestamp current timestamp
+     */
+    public void spendingsReport(final int startTimeStamp, final int endTimeStamp, final String iban,
+                                final int timestamp) {
         int found = 0;
         ObjectNode objectNode1 = new ObjectMapper().createObjectNode();
         objectNode1.put("command", "spendingsReport");
         for (User user : users) {
             for (Account account : user.getAccounts()) {
-                if (account.getIban().equals(Iban)) {
+                if (account.getIban().equals(iban)) {
                     found = 1;
-                    ObjectNode objectNode = account.makeSpendingsReport(startTimeStamp, endTimeStamp, timestamp);
+                    ObjectNode objectNode = account.makeSpendingsReport(startTimeStamp,
+                            endTimeStamp, timestamp);
                     objectNode1.put("output", objectNode);
                 }
             }

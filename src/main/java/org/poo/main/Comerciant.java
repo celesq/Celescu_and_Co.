@@ -8,33 +8,57 @@ public class Comerciant {
     private String description;
     private List<String> commerciants;
 
-    public Comerciant(int id, String description, List<String> commerciants) {
+    public Comerciant(final int id, final String description, final List<String> commerciants) {
         this.id = id;
         this.description = description;
         this.commerciants = commerciants;
     }
 
+    /**
+     *
+     * @return commerciants
+     */
     public List<String> getCommerciants() {
         return commerciants;
     }
 
-    public void setCommerciants(ArrayList<String> commerciants) {
+    /**
+     *
+     * @param commerciants setter
+     */
+    public void setCommerciants(final ArrayList<String> commerciants) {
         this.commerciants = commerciants;
     }
 
+    /**
+     *
+     * @return description
+     */
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    /**
+     *
+     * @param description setter
+     */
+    public void setDescription(final String description) {
         this.description = description;
     }
 
+    /**
+     *
+     * @return id
+     */
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    /**
+     *
+     * @param id id
+     */
+    public void setId(final int id) {
         this.id = id;
     }
 }

@@ -1,7 +1,8 @@
-package org.poo.main.utils;
+package org.poo.main;
 
 import org.poo.checker.Checker;
 import org.poo.checker.CheckerConstants;
+import org.poo.utils.Start;
 
 import java.io.File;
 import java.io.IOException;

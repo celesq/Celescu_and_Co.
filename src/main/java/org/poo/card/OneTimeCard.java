@@ -1,14 +1,14 @@
-package org.poo.main.card;
+package org.poo.card;
 
-import org.poo.main.bank.ExchangeRate;
-import org.poo.main.account.Transactions;
-import org.poo.main.account.Account;
+import org.poo.bank.ExchangeRate;
+import org.poo.account.Transactions;
+import org.poo.account.Account;
 
 import java.util.List;
 
-import static org.poo.main.bank.ExchangeRate.calculateExchangeRate;
-import static org.poo.main.utils.Utils.roundToTwoDecimalPlates;
-import static org.poo.main.utils.Utils.generateCardNumber;
+import static org.poo.bank.ExchangeRate.calculateExchangeRate;
+import static org.poo.utils.Utils.roundToTwoDecimalPlates;
+import static org.poo.utils.Utils.generateCardNumber;
 
 public class OneTimeCard extends ClassicCard implements Card {
 

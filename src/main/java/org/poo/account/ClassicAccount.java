@@ -1,10 +1,10 @@
-package org.poo.main.account;
+package org.poo.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.poo.main.card.Card;
-import org.poo.main.bank.ExchangeRate;
+import org.poo.card.Card;
+import org.poo.bank.ExchangeRate;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.poo.main.bank.ExchangeRate.calculateExchangeRate;
-import static org.poo.main.utils.Utils.putTransactionInObject;
-import static org.poo.main.utils.Utils.roundToTwoDecimalPlates;
+import static org.poo.bank.ExchangeRate.calculateExchangeRate;
+import static org.poo.utils.Utils.putTransactionInObject;
+import static org.poo.utils.Utils.roundToTwoDecimalPlates;
 
 
 public class ClassicAccount implements Account {

@@ -1,8 +1,8 @@
-package org.poo.main.account;
+package org.poo.account;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.poo.main.card.Card;
-import org.poo.main.bank.ExchangeRate;
+import org.poo.card.Card;
+import org.poo.bank.ExchangeRate;
 
 import java.util.ArrayList;
 import java.util.List;

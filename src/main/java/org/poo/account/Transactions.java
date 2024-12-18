@@ -1,4 +1,4 @@
-package org.poo.main.account;
+package org.poo.account;
 
 import java.util.ArrayList;
 import java.util.List;

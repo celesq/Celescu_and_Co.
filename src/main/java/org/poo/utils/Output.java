@@ -1,25 +1,25 @@
-package org.poo.main.utils;
+package org.poo.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
-import org.poo.main.account.Account;
-import org.poo.main.account.AccountFactory;
-import org.poo.main.card.Card;
-import org.poo.main.card.ClassicCard;
-import org.poo.main.bank.ExchangeRate;
-import org.poo.main.card.OneTimeCard;
-import org.poo.main.account.Transactions;
-import org.poo.main.bank.User;
+import org.poo.account.Account;
+import org.poo.account.AccountFactory;
+import org.poo.card.Card;
+import org.poo.card.ClassicCard;
+import org.poo.bank.ExchangeRate;
+import org.poo.card.OneTimeCard;
+import org.poo.account.Transactions;
+import org.poo.bank.User;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.poo.main.utils.Utils.generateCardNumber;
-import static org.poo.main.utils.Utils.putTransactionInObject;
-import static org.poo.main.utils.Utils.generateIBAN;
+import static org.poo.utils.Utils.generateCardNumber;
+import static org.poo.utils.Utils.putTransactionInObject;
+import static org.poo.utils.Utils.generateIBAN;
 
 public class Output {
     private List<User> users;

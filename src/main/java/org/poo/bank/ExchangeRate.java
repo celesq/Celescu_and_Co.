@@ -1,6 +1,6 @@
-package org.poo.main.bank;
+package org.poo.bank;
 
-import org.poo.main.account.Account;
+import org.poo.account.Account;
 
 import java.util.List;
 

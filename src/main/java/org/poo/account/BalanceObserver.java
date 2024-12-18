@@ -1,4 +1,4 @@
-package org.poo.main.account;
+package org.poo.account;
 
 public interface BalanceObserver {
 

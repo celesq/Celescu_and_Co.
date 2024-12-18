@@ -1,45 +1,120 @@
-# Project Assignment POO  - J. POO Morgan - Phase One
+Celescu Rares Andrei 322CA
 
-![](https://s.yimg.com/ny/api/res/1.2/aN0SfZTtLF5hLNO0wIN3gg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTcwNTtoPTQyNztjZj13ZWJw/https://o.aolcdn.com/hss/storage/midas/b23d8b7f62a50a7b79152996890aa052/204855412/fit.gif)
-
-#### Assignment Link: [https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/2024/proiect-e1](https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/2024/proiect-e1)
-
-## Skel Structure
-
-* src/
-    * checker/ - checker files
-    * fileio/ - contains classes used to read data from the json files
-    * main/
-        * Main - the Main class runs the checker on your implementation. Add the entry point to your implementation in it. Run Main to test your implementation from the IDE or from command line.
-        * Test - run the main method from Test class with the name of the input file from the command line and the result will be written
-          to the out.txt file. Thus, you can compare this result with ref.
-* input/ - contains the tests in JSON format
-* ref/ - contains all reference output for the tests in JSON format
-
-## Tests
-
-Tests Basic 1 - 8: Infrastructure \
-Tests Functional 9 - 17: Advanced \
-Tests Flow 18 - 20: Large Input
-
-1. test01_create - 2p
-2. test02_delete - 2p
-3. test03_one_time_card - 2p
-4. test04_funds - 2p
-5. test05_money_flow - 2p
-6. test06_non_existing - 2p
-7. test07_send_money_part1 - 3p
-8. test08_send_money_part2 - 3p
-9. test09_print_transactions - 3p
-10. test10_errors - 3p
-11. test11_card_status - 5p
-12. test12_continuous_payments - 5p
-13. test13_savings_account - 5p
-14. test14_split_payments - 5p
-15. test15_every_payment - 5p
-16. test16_report - 5p
-17. test17_spendings_report - 5p
-18. test18_large_input_1 - 7p
-19. test19_large_input_2 - 7p
-20. test19_large_input_3 - 7p
-
+	Pentru implementarea temei am folosit mai multe clase
+	ajutatoare si 3 interfete care mi s-au parut utile.
+	Interfetele account si card reprezinta o implementare
+	basic a tipurilor diferite de account(savings si clasic),
+	iar interfata card reprezinta si ea un mod general de
+	a defini un tip de card din cele 2. Totodata, mi s-a
+	parut util ca clasele SavingsAccount si OneTimeCard,
+	pe langa implementarea interfetelor sa si extinda clasele
+	basic ClassicAccount si ClassicCard, deoarece multe metode
+	nu trebuiau suprascrise, ci doar folosite din clasele
+	parinte.
+	
+	Totodata, am folosit si mai multe design pattern-uri care
+	mi s-au parut ca se preteaza bine in functie de contextul
+	problemei, precum Builder pattern(care este implementat
+	inauntrul clasei Transactions). Cum clasa Transactions
+	are multe campuri din care doar 2 sunt folosite in orice
+	tip de tranzactie (descripiton si timestamp), restul fiind
+	situationale, un builder care iti initializa campurile
+	dorite ajuta codul sa fie mai curat si mai OOP-like.
+	
+	Alt pattern folosit este Factory pattern, pe care l-am
+	folosit la Account, mai precis cand se creea un cont nou
+	se verifica campul de accountType, iar in cazul in care
+	era classic se returna un obiect de tip ClassicAccount,
+	in celalalt caz (saving) se returna un obiect de tip
+	SavingsAccount. Mi s-a parut utila folosirea acestui
+	pattern deoarece exista o singura comanda de createAccount
+	in input, care doar are ca parametru account type-ul,
+	spre deosebire de comenzile createCard/ createOneTimeCard
+	unde nu mi s-a parut necesara folosirea unui factory.
+	
+	Un alt pattern care mi s-a parut util in contextul
+	aplicatiei de banking implementata de mine a fost Observer.
+	Am implementat un BalanceObserver care verifica mereu cand
+	se da checkCreditCardStatus la balanta contului. In caz
+	ca aceasta este sub balanta minima setata / cu 30 sub ea
+	pentru cazul de warning, acesta seteaza automat toate
+	cardurile (ele fiind "abonatii", iar account-ul fiind
+	"subiectul") pe frozen / warning (depinde de caz).
+	
+	Mai util mi s-ar fi parut daca acest observer ar fi
+	verificat balanta contului pe care il observa dupa fiecare
+	tranzactie facuta (payOnline / sendMoney / split).
+	Problema a fost ca in teste blocarea / punerea pe warning 
+	a unuia / mai multor carduri se face doar in momentul 
+	in care se apeleaza comanda checkCardStatus.
+	Eu am incercat sa implementez verificarea aceasta dupa
+	fiecare plata facuta (in acest caz ar fi avut mai mult
+	sens folosirea unui Observer) dar imi picau din teste :(.
+	In orice caz, am folosit acest Observer cand se apeleaza
+	comanda checkCardStatus, iar daca balanta nu este adecvata
+	se blocheaza toate cardurile ("abonatii la Observer").
+	
+	Pentru implementarea propriu-zisa a temei am folosit
+	niste ArrayListuri pentru stocarea datelor de input, precum
+	comericaintii, exchange rate-urile, etc. Aceste liste
+	le-am initalizat in clasa Start cu metoda statica
+	parseDataAndStart, ulterior iterand comenzile si
+	printand outputul in clasa speciala de Output.
+	
+	In clasa Output am iterat fiecare comanda si am
+	intrat in fiecare metoda adecvata, urmand ca logica
+	mai complicata sa fie facuta in metodele claselor aferente
+	comenzii respective.
+	
+	In clasa ExchangeRate, metoda calculateExchangeRate
+	reprezinta o metoda ajutatoare cu care imi convertesc
+	o moneda la moneda care trebuie fi folosita. Datorita
+	faptului ca am implementat exchange rate-urile cu o lista,
+	am fost nevoit sa fac mai multe for-uri (nu imbricate), in
+	care sa parcurg lista de exchange rate-uri in mai multe
+	moduri cu abordari diferite (pentru a fi sigur ca am atins
+	toate cazurile). Astfel am reusit sa acopar fiecare caz
+	de exchange rate, rezultat fiind reusirea testelor cu input
+	mare.
+	
+	Celelalte clase precum Classic/SavingsAccount sau Classic/
+	OneTimeCard au implementarile metodelor scrise intr-un mod
+	simplist, respectand cerinta si atingand scopul dorit.
+	Lista de tranzactii am stocat-o ca o lista de obiecte
+	de tip Transactions, iar cand este nevoie de printarea
+	anumitor tranzactii din cadrul unui cont (datorita folosirii
+	builder-ului) se printeaza doar cele diferite de null / 0.
+	
+	Mentionez ca implementarea aliaselor am facut-o cu ajutorul
+	unui HashMap<String,String>, unde tineam minte aliasul dorit
+	si IBAN-ul contului asociat. In testele unde se folosea
+	un alias pentru trimiterea unei sume de bani prima data 
+	am verificat daca String-ul trimis ca account este un IBAN
+	valid, in caz contrar verific in HashMap-ul de alias-uri
+	asociat contului care vrea sa faca plata. In cazul in care
+	se gaseste, se ia IBAN-ul asociat alias-ului si se gaseste
+	contul cu IBAN-ul respectiv, pentru a putea fi folosit in
+	metoda sendMoney.
+	
+	Am folosit si block-uri try catch pentru tratarea unor
+	exceptii, dar din pacate la unele teste daca puneam in 
+	ObjectNode si in output mesajul de eroare nu mai dadea.
+	In acest caz, am dat un simplu System.out.println pentru
+	semnalarea unei erori.
+	
+	In plus, am folosit si clasa facuta deja Utils, adaugand
+	doua metode necesare implementarii mele, precum 
+	roundToTwoDecimalPlates, metoda ce rotunjeste un double
+	la 2 zecimale, precum si putTransactionInObject. Metoda
+	aceasta este folosita pentru a pune fiecare camp a unei
+	anumite transactii dintr-un cont intr-un ObjectNode, pentru
+	a fi printat la output. In acest mod, gratie folosirii 
+	builder pattern-ului doar iterez prin transactiile unui
+	cont si apelez aceasta functie care imi face direct obiectul
+	de tip ObjectNode ce trebuie adaugat la Array-ul de output.
+	
+	Restul claselor / metodelor sunt destul de intuitive,
+	precum si clasa Commerciant care are doar id-ul si 
+	descrierea tipului de comerciant, precum si lista
+	de String-uri asociata ce reprezinta comerciantii asociati.
+	

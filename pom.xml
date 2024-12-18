@@ -31,7 +31,7 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        org.poo.main.Main
+                                        org.poo.main.utils.Main
                                     </mainClass>
                                 </manifest>
                             </archive>

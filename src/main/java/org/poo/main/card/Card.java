@@ -1,4 +1,8 @@
-package org.poo.main;
+package org.poo.main.card;
+
+import org.poo.main.bank.ExchangeRate;
+import org.poo.main.account.Account;
+import org.poo.main.account.BalanceObserver;
 
 import java.util.List;
 

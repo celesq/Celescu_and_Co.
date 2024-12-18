@@ -1,4 +1,6 @@
-package org.poo.main;
+package org.poo.main.bank;
+
+import org.poo.main.account.Account;
 
 import java.util.ArrayList;
 import java.util.HashMap;

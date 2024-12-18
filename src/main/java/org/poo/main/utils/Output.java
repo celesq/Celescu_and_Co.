@@ -1,17 +1,25 @@
-package org.poo.main;
+package org.poo.main.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
+import org.poo.main.account.Account;
+import org.poo.main.account.AccountFactory;
+import org.poo.main.card.Card;
+import org.poo.main.card.ClassicCard;
+import org.poo.main.bank.ExchangeRate;
+import org.poo.main.card.OneTimeCard;
+import org.poo.main.account.Transactions;
+import org.poo.main.bank.User;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.poo.main.Utils.putTransactionInObject;
-import static org.poo.utils.Utils.generateCardNumber;
-import static org.poo.utils.Utils.generateIBAN;
+import static org.poo.main.utils.Utils.generateCardNumber;
+import static org.poo.main.utils.Utils.putTransactionInObject;
+import static org.poo.main.utils.Utils.generateIBAN;
 
 public class Output {
     private List<User> users;
@@ -19,6 +27,7 @@ public class Output {
     private List<Comerciant> comerciants;
     private CommandInput[] commandInput;
     private ArrayNode output;
+    private static final int MAX_CARD_LIMIT = 30;
 
     public Output(final List<User> users, final List<ExchangeRate> exchangeRates,
                   final List<Comerciant> comerciants, final CommandInput[] commandInput,
@@ -458,7 +467,6 @@ public class Output {
      */
     public void checkCardStatus(final String command, final String cardNumber,
                                 final int timestamp) {
-        Card checkedCard = null;
         Account checkedAccount = null;
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("command", command);
@@ -466,14 +474,18 @@ public class Output {
             for (Account account : user.getAccounts()) {
                 for (Card card : account.getCards()) {
                     if (card.getNumber().equals(cardNumber)) {
-                        checkedCard = card;
                         checkedAccount = account;
                     }
                 }
             }
         }
         try {
-            checkedCard.update(checkedAccount, timestamp);
+            for (Card card : checkedAccount.getCards()) {
+                if (checkedAccount.getBalance() <= checkedAccount.getMinBalance()
+                || checkedAccount.getBalance() - checkedAccount.getMinBalance() <= MAX_CARD_LIMIT) {
+                    card.update(checkedAccount, timestamp);
+                }
+            }
         } catch (Exception e) {
             ObjectNode objectnode1 = new ObjectMapper().createObjectNode();
             objectnode1.put("timestamp", timestamp);

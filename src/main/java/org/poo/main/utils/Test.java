@@ -1,4 +1,4 @@
-package org.poo.main;
+package org.poo.main.utils;
 
 import org.poo.checker.CheckerConstants;
 

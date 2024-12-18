@@ -1,9 +1,13 @@
-package org.poo.main;
+package org.poo.main.card;
+
+import org.poo.main.bank.ExchangeRate;
+import org.poo.main.account.Transactions;
+import org.poo.main.account.Account;
 
 import java.util.List;
 
-import static org.poo.main.ExchangeRate.calculateExchangeRate;
-import static org.poo.main.Utils.roundToTwoDecimalPlates;
+import static org.poo.main.bank.ExchangeRate.calculateExchangeRate;
+import static org.poo.main.utils.Utils.roundToTwoDecimalPlates;
 
 public class ClassicCard implements Card {
     private static final int MAX_CARD_LIMIT = 30;

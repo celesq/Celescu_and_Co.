@@ -1,3 +1,15 @@
+commit 56c531a5dfba9810a366fd7e0fe11c5f48cce070
+Author: celesq <raresutuboss@gmail.com>
+Date:   Tue Dec 17 17:27:58 2024 +0200
+
+    Finished the coding style
+
+commit 8d465566b444a40d2ed1914925c1c882eee33235
+Author: celesq <raresutuboss@gmail.com>
+Date:   Mon Dec 16 19:44:46 2024 +0200
+
+    Added factory and observer design patterns
+
 commit 2a19bc2d5552808c661428c49f3c2e63121cb786
 Author: celesq <raresutuboss@gmail.com>
 Date:   Mon Dec 16 17:02:46 2024 +0200

@@ -1,17 +1,19 @@
-package org.poo.main;
+package org.poo.main.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.checker.CheckerConstants;
 import org.poo.fileio.ObjectInput;
+import org.poo.main.bank.ExchangeRate;
+import org.poo.main.bank.User;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.poo.utils.Utils.resetRandom;
+import static org.poo.main.utils.Utils.resetRandom;
 
 public final class Start {
 

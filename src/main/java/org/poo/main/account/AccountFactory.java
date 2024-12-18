@@ -1,4 +1,4 @@
-package org.poo.main;
+package org.poo.main.account;
 
 public class AccountFactory {
 
@@ -10,8 +10,8 @@ public class AccountFactory {
      * @param interestRate account's interest rate
      * @return account created
      */
-    static Account createAccount(final String accountType, final String iban, final String currency,
-                                 final double interestRate) {
+    public static Account createAccount(final String accountType, final String iban,
+                                        final String currency, final double interestRate) {
         return switch (accountType) {
             case "savings" -> new SavingsAccount(iban, currency, accountType, interestRate);
             case "classic" -> new ClassicAccount(iban, currency, accountType);

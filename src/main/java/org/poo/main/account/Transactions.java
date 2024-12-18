@@ -1,4 +1,4 @@
-package org.poo.main;
+package org.poo.main.account;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class Transactions {
         this.error = builder.error;
     }
 
-    static class TransactionsBuilder {
+    public static class TransactionsBuilder {
         private int timestamp = 0;
         private String description = null;
         private String amount = null;

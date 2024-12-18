@@ -581,9 +581,11 @@ public class Output {
                 }
             }
         }
-        if (sender != null && recieverAccount != null) {
+        try {
             sender.sendMoney(command, amount, recieverAccount, timestamp, description,
                     exchangeRates);
+        } catch (Exception e) {
+            System.out.println("Null pointer exception on sendMoney method, please reconsider.");
         }
     }
 

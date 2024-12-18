@@ -1,0 +1,103 @@
+Celescu Rares Andrei 322CA
+
+	Pentru implementarea temei am folosit mai multe clase
+	ajutatoare si 3 interfete care mi s-au parut utile.
+	Interfetele account si card reprezinta o implementare
+	basic a tipurilor diferite de account(savings si clasic),
+	iar interfata card reprezinta si ea un mod general de
+	a defini un tip de card din cele 2. Totodata, mi s-a
+	parut util ca clasele SavingsAccount si OneTimeCard,
+	pe langa implementarea interfetelor sa si extinda clasele
+	basic ClassicAccount si ClassicCard, deoarece multe metode
+	nu trebuiau suprascrise, ci doar folosite din clasele
+	parinte.
+	
+	Totodata, am folosit si mai multe design pattern-uri care
+	mi s-au parut ca se preteaza bine in functie de contextul
+	problemei, precum Builder pattern(care este implementat
+	inauntrul clasei Transactions). Cum clasa Transactions
+	are multe campuri din care doar 2 sunt folosite in orice
+	tip de tranzactie (descripiton si timestamp), restul fiind
+	situationale, un builder care iti initializa campurile
+	dorite ajuta codul sa fie mai curat si mai OOP-like.
+	
+	Alt pattern folosit este Factory pattern, pe care l-am
+	folosit la Account, mai precis cand se creea un cont nou
+	se verifica campul de accountType, iar in cazul in care
+	era classic se returna un obiect de tip ClassicAccount,
+	in celalalt caz (saving) se returna un obiect de tip
+	SavingsAccount. Mi s-a parut utila folosirea acestui
+	pattern deoarece exista o singura comanda de createAccount
+	in input, care doar are ca parametru account type-ul,
+	spre deosebire de comenzile createCard/ createOneTimeCard
+	unde nu mi s-a parut necesara folosirea unui factory.
+	
+	Un alt pattern care mi s-a parut util in contextul
+	aplicatiei de banking implementata de mine a fost Observer.
+	Am implementat un BalanceObserver care verifica mereu cand
+	se da checkCreditCardStatus la balanta contului. In caz
+	ca aceasta este sub balanta minima setata / cu 30 sub ea
+	pentru cazul de warning, acesta seteaza automat toate
+	cardurile (ele fiind "abonatii", iar account-ul fiind
+	"subiectul") pe frozen / warning (depinde de caz).
+	
+	Mai util mi s-ar fi parut daca acest observer ar fi
+	verificat balanta contului pe care il observa dupa fiecare
+	tranzactie facuta (payOnline / sendMoney / split).
+	Problema a fost ca in teste blocarea / punerea pe warning 
+	a unuia / mai multor carduri se face doar in momentul 
+	in care se apeleaza comanda checkCardStatus.
+	Eu am incercat sa implementez verificarea aceasta dupa
+	fiecare plata facuta (in acest caz ar fi avut mai mult
+	sens folosirea unui Observer) dar imi picau din teste :(.
+	In orice caz, am folosit acest Observer cand se apeleaza
+	comanda checkCardStatus, iar daca balanta nu este adecvata
+	se blocheaza toate cardurile ("abonatii la Observer").
+	
+	Pentru implementarea propriu-zisa a temei am folosit
+	niste ArrayListuri pentru stocarea datelor de input, precum
+	comericaintii, exchange rate-urile, etc. Aceste liste
+	le-am initalizat in clasa Start cu metoda statica
+	parseDataAndStart, ulterior iterand comenzile si
+	printand outputul in clasa speciala de Output.
+	
+	In clasa Output am iterat fiecare comanda si am
+	intrat in fiecare metoda adecvata, urmand ca logica
+	mai complicata sa fie facuta in metodele claselor aferente
+	comenzii respective.
+	
+	In clasa ExchangeRate, metoda calculateExchangeRate
+	reprezinta o metoda ajutatoare cu care imi convertesc
+	o moneda la moneda care trebuie fi folosita. Datorita
+	faptului ca am implementat exchange rate-urile cu o lista,
+	am fost nevoit sa fac mai multe for-uri (nu imbricate), in
+	care sa parcurg lista de exchange rate-uri in mai multe
+	moduri cu abordari diferite (pentru a fi sigur ca am atins
+	toate cazurile). Astfel am reusit sa acopar fiecare caz
+	de exchange rate, rezultat fiind reusirea testelor cu input
+	mare.
+	
+	Celelalte clase precum Classic/SavingsAccount sau Classic/
+	OneTimeCard au implementarile metodelor scrise intr-un mod
+	simplist, respectand cerinta si atingand scopul dorit.
+	Lista de tranzactii am stocat-o ca o lista de obiecte
+	de tip Transactions, iar cand este nevoie de printarea
+	anumitor tranzactii din cadrul unui cont (datorita folosirii
+	builder-ului) se printeaza doar cele diferite de null / 0.
+	
+	Mentionez ca implementarea aliaselor am facut-o cu ajutorul
+	unui HashMap<String,String>, unde tineam minte aliasul dorit
+	si IBAN-ul contului asociat. In testele unde se folosea
+	un alias pentru trimiterea unei sume de bani prima data 
+	am verificat daca String-ul trimis ca account este un IBAN
+	valid, in caz contrar verific in HashMap-ul de alias-uri
+	asociat contului care vrea sa faca plata. In cazul in care
+	se gaseste, se ia IBAN-ul asociat alias-ului si se gaseste
+	contul cu IBAN-ul respectiv, pentru a putea fi folosit in
+	metoda sendMoney.
+	
+	Am folosit si block-uri try catch pentru tratarea unor
+	exceptii, dar din pacate la unele teste daca puneam in 
+	ObjectNode si in output mesajul de eroare nu mai dadea.
+	In acest caz, am dat un simplu System.out.println pentru
+	semnalarea unei erori.

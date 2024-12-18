@@ -1,3 +1,9 @@
+commit 0cd111b956ff5232f69acaa8c5320af434192f68
+Author: celesq <raresutuboss@gmail.com>
+Date:   Wed Dec 18 11:48:52 2024 +0200
+
+    Updated the packages and checkstyle
+
 commit 56c531a5dfba9810a366fd7e0fe11c5f48cce070
 Author: celesq <raresutuboss@gmail.com>
 Date:   Tue Dec 17 17:27:58 2024 +0200

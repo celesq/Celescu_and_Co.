@@ -585,7 +585,7 @@ public class Output {
             sender.sendMoney(command, amount, recieverAccount, timestamp, description,
                     exchangeRates);
         } catch (Exception e) {
-            System.out.println("Null pointer exception on sendMoney method, please reconsider.");
+            return;
         }
     }
 
